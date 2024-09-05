@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import './App.css'
+import { useState, useEffect } from 'react';
+import './App.css';
 
 export default function App() {
 
@@ -7,5 +7,5 @@ export default function App() {
         <main>
             <h1>Hello world!</h1>
         </main>
-    )
+    );
 }
