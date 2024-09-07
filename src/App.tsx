@@ -8,7 +8,7 @@ export default function App() {
 
     return (
         <main>
-            {apiKey
+            {!apiKey
                 ? <ApiKeyLogin setApiKey={setApiKey} />
                 : <Chat apiKey={apiKey} />
             }

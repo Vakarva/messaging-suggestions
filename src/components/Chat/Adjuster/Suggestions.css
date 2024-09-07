@@ -1,0 +1,9 @@
+.suggestion {
+    border: 1px solid;
+    border-radius: 10px;
+}
+
+.suggestion-buttons {
+    display: flex;
+    flex-direction: rows;
+}

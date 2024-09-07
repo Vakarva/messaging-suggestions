@@ -1,0 +1,4 @@
+.adjustor {
+    display: flex;
+    flex-direction: column;
+}

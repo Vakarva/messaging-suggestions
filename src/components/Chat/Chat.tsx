@@ -4,7 +4,7 @@ import './Chat.css';
 import { Role, Message } from "../../types/types";
 import ChatInput from "./ChatInput/ChatInput";
 import Messages from "./Messages/Messages";
-import AdjusterInput from "./AdjusterInput/AdjusterInput";
+import Adjuster from "./Adjuster/Adjuster";
 
 export default function Chat(props: {
     apiKey: string
@@ -29,9 +29,10 @@ export default function Chat(props: {
                 <Messages messages={messages} />
             </div>
             <div>
-                <AdjusterInput
+                <Adjuster
                     addMessage={addMessage}
                     apiKey={props.apiKey}
+                    messages={messages}
                 />
             </div>
         </div>

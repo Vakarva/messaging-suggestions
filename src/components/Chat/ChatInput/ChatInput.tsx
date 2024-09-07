@@ -1,17 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./ChatInput.css";
 import { Role } from "../../../types/types";
 
 export default function ChatInput(props: {
     addMessage: (content: string, role: Role) => void;
     role: Role;
+    content?: string;
 }) {
     const [content, setContent] = useState("");
+
+    // If `props.content` is passed down, fill `content` with it
+    useEffect(() => {
+        if (props.content) {
+            setContent(props.content)
+        }
+    }, [props.content])
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        props.addMessage(content, props.role);
+        props.addMessage(content.trim(), props.role);   // trim content of unnecessary whitespace before adding to conversation
         setContent(""); // clear the content box
     }
 
@@ -28,7 +36,7 @@ export default function ChatInput(props: {
             />
             <button
                 type="submit"
-                disabled={content.trim() === ""}    // Check if white-space trimmed message is empty
+                disabled={content.trim() === ""}    // disable if content is empty or only whitespace
             >
                 Send
             </button>
