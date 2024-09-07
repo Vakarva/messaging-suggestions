@@ -1,4 +1,4 @@
-.messages {
+.chat-history {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -7,16 +7,20 @@
     border: 1px solid;
     border-radius: 3px;
     padding: 5px;
+    margin-right: 10px;
 }
 
 .message-box {
+    background-color: blue;
     border: 0.5px solid;
     border-radius: 10px;
     margin-bottom: 5px;
-    padding: 5px;
+    width: 80%;
+    padding: 7px;
     text-align: left;
 }
 
-.message-box--user {
-    background-color: blue;
+.message-box--assistant {
+    background-color: transparent;
+    margin-left: 20%;
 }

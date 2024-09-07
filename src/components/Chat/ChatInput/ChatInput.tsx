@@ -9,6 +9,8 @@ export default function ChatInput(props: {
 }) {
     const [content, setContent] = useState("");
 
+    const sendAs = props.role === Role.user ? "Worker" : "Adjuster";
+
     // If `props.content` is passed down, fill `content` with it
     useEffect(() => {
         if (props.content) {
@@ -38,7 +40,7 @@ export default function ChatInput(props: {
                 type="submit"
                 disabled={content.trim() === ""}    // disable if content is empty or only whitespace
             >
-                Send
+                Send as {sendAs}
             </button>
         </form>
     );

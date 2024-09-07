@@ -1,4 +1,12 @@
-.chat-container {
+.chat {
     display: flex;
     flex-direction: row;
+    height: 100vh;
+    padding: 10px;
+}
+
+.input-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }

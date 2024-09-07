@@ -18,17 +18,15 @@ export default function Chat(props: {
     }
 
     return (
-        <div className="chat-container">
-            <div>
+        <div className="chat">
+            <ChatHistory messages={messages} />
+
+            <div className="input-column">
                 <ChatInput
                     addMessage={addMessage}
                     role={Role.user}
                 />
-            </div>
-            <div>
-                <ChatHistory messages={messages} />
-            </div>
-            <div>
+
                 <Adjuster
                     addMessage={addMessage}
                     apiKey={props.apiKey}
