@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 import './Chat.css';
 import { Role, Message } from "../../types/types";
 import ChatInput from "./ChatInput/ChatInput";
-import Messages from "./Messages/Messages";
+import ChatHistory from "./ChatHistory/ChatHistory";
 import Adjuster from "./Adjuster/Adjuster";
 
 export default function Chat(props: {
@@ -26,7 +26,7 @@ export default function Chat(props: {
                 />
             </div>
             <div>
-                <Messages messages={messages} />
+                <ChatHistory messages={messages} />
             </div>
             <div>
                 <Adjuster

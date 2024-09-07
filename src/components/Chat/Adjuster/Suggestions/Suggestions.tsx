@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import OpenAI from "openai";
 import "./Suggestions.css"
-import { Role, Message } from "../../../types/types";
+import { Role, Message } from "../../../../types/types";
 
 export default function Suggestions(props: {
     apiKey: string;

@@ -1,8 +1,8 @@
 import classNames from "classnames";
-import "./Messages.css"
+import "./ChatHistory.css"
 import { Role, Message } from "../../../types/types";
 
-export default function Messages(props: {
+export default function ChatHistory(props: {
     messages: Message[];
 }) {
 

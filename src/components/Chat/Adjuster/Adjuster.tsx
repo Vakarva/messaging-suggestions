@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./Adjuster.css";
 import { Message, Role } from "../../../types/types";
-import Suggestions from "./Suggestions";
+import Suggestions from "./Suggestions/Suggestions";
 import ChatInput from "../ChatInput/ChatInput";
 
 
