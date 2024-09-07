@@ -1,10 +1,9 @@
 import { useState, useRef } from "react";
+import "./ApiKeyLogin.css"
 
-interface APIKeyLoginProps {
-    setApiKey: (apiKey: string) => void;
-}
-
-export default function APIKeyLogin(props: APIKeyLoginProps) {
+export default function ApiKeyLogin(props: {
+    setApiKey: (apiKey: string) => void
+}) {
     const [isValidKey, setIsValidKey] = useState<boolean | null>(null);
 
     const apiKeyRef = useRef<HTMLInputElement>(null);

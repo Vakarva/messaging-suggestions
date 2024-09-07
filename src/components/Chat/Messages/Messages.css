@@ -1,0 +1,17 @@
+.messages {
+    border: 1px solid;
+    border-radius: 3px;
+    padding: 5px;
+}
+
+.message-box {
+    border: 0.5px solid;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    padding: 5px;
+    text-align: left;
+}
+
+.message-box--user {
+    background-color: blue;
+}
