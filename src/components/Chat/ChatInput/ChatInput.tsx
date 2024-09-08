@@ -32,7 +32,7 @@ export default function ChatInput(props: {
     return (
         <form className="message-form" onSubmit={handleSubmit} >
             <textarea
-                className="message-form--textarea"
+                className={`message-form--textarea message-form--textarea--${props.role}`}
                 name={`${props.role}Message`}
                 value={content}
                 onChange={handleTextareaChange}

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Message, Role } from "../../../types/types";
-import Suggestions from "./Suggestions/Suggestions";
+import GetSuggestion from "./GetSuggestion/GetSuggestion";
 import ChatInput from "../ChatInput/ChatInput";
 
 
@@ -10,28 +10,20 @@ export default function Adjuster(props: {
     messages: Message[]
 }) {
     const [suggestion, setSuggestion] = useState("");
-    const [hasCopiedSuggestion, setHasCopiedSuggestion] = useState(false);
-
-    useEffect(() => {
-        if (hasCopiedSuggestion) {
-            setHasCopiedSuggestion(false);
-        }
-    }, [hasCopiedSuggestion]);
 
     return (
         <>
-            <Suggestions
+            <GetSuggestion
                 apiKey={props.apiKey}
                 messages={props.messages}
                 suggestion={suggestion}
                 setSuggestion={setSuggestion}
-                setHasCopiedSuggestion={setHasCopiedSuggestion}
             />
 
             <ChatInput
                 addMessage={props.addMessage}
                 role={Role.assistant}
-                content={hasCopiedSuggestion ? suggestion : undefined}
+                content={suggestion}
             />
         </>
     );

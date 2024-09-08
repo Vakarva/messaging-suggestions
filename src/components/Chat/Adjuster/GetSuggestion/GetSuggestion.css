@@ -6,6 +6,16 @@
     height: 100%;
 }
 
+.top-button {
+    border-radius: 7px 7px 0px 0px;
+    background-color: #6800c9;
+    transition: background-color 0.25s;
+}
+
+.top-button:hover {
+    background-color: #9027f3;
+}
+
 .suggestion {
     background-color: rgba(0, 0, 0, 0.796);
     color: #adff2f;

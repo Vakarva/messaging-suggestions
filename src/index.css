@@ -33,13 +33,13 @@ body {
 }
 
 button {
-    border-radius: 7px;
-    border: 1px solid transparent;
+    border: none;
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: #d4d4d4;
+    background-color: #005ec2;
+    color: var(--content-light-text-color);
     cursor: pointer;
     transition: background-color 0.25s;
 }
@@ -55,21 +55,14 @@ button:disabled {
 }
 
 button:hover {
-    background-color: #cacaca;
+    background-color: #007bff;
 }
 
 button:disabled:hover {
     background-color: #b3b3b3;
+    cursor: not-allowed;
 }
 
 button:disabled:active {
     box-shadow: none;
-}
-
-.bottom-button {
-    border-radius: 0px 0px 7px 7px;
-}
-
-.top-button {
-    border-radius: 7px 7px 0px 0px;
 }
