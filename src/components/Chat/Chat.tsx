@@ -19,19 +19,25 @@ export default function Chat(props: {
 
     return (
         <div className="chat">
-            <ChatHistory messages={messages} />
+            <div className="chat-history-container">
+                <ChatHistory messages={messages} />
+            </div>
 
-            <div className="input-column">
-                <ChatInput
-                    addMessage={addMessage}
-                    role={Role.user}
-                />
+            <div className="input-container">
+                <div className="worker-input-container">
+                    <ChatInput
+                        addMessage={addMessage}
+                        role={Role.user}
+                    />
+                </div>
 
-                <Adjuster
-                    addMessage={addMessage}
-                    apiKey={props.apiKey}
-                    messages={messages}
-                />
+                <div className="adjuster-input-container">
+                    <Adjuster
+                        addMessage={addMessage}
+                        apiKey={props.apiKey}
+                        messages={messages}
+                    />
+                </div>
             </div>
         </div>
     );

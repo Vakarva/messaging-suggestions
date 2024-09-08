@@ -30,13 +30,15 @@ export default function ChatInput(props: {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="message-form">
+        <form className="message-form" onSubmit={handleSubmit} >
             <textarea
+                className="message-form--textarea"
                 name={`${props.role}Message`}
                 value={content}
                 onChange={handleTextareaChange}
             />
             <button
+                className="bottom-button"
                 type="submit"
                 disabled={content.trim() === ""}    // disable if content is empty or only whitespace
             >

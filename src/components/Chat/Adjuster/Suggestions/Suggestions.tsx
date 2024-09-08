@@ -6,11 +6,12 @@ import { Role, Message } from "../../../../types/types";
 export default function Suggestions(props: {
     apiKey: string;
     messages: Message[];
-    copySuggestion: (suggestion: string) => void;
+    suggestion: string;
+    setSuggestion: React.Dispatch<React.SetStateAction<string>>;
+    setHasCopiedSuggestion: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
     /* State Variables */
     const [openai, setOpenai] = useState<OpenAI | null>(null);
-    const [suggestion, setSuggestion] = useState("");
 
     /* Static Properties */
     // Establish how you want the LLM to behave (and what sort of knowledge it should have about GainLife)
@@ -23,6 +24,7 @@ export default function Suggestions(props: {
         systemMessage,
         ...props.messages.map(({ role, content }) => ({ role, content })) // remove `id` field from `messages` array - LLM does not need it
     ];
+    const isCopyDisabled = !props.suggestion.trim();
 
     /* useEffect Hooks */
     useEffect(() => {
@@ -38,7 +40,7 @@ export default function Suggestions(props: {
     async function getSuggestion() {
         if (!openai) return;    // ensure OpenAI instance is initialized
 
-        setSuggestion("");  // clear previous suggestion (if it's still there) before starting a new stream
+        props.setSuggestion("");  // clear previous suggestion (if it's still there) before starting a new stream
 
         try {
             const stream = await openai.chat.completions.create({
@@ -47,32 +49,35 @@ export default function Suggestions(props: {
                 stream: true,
             });
             for await (const chunk of stream) {
-                setSuggestion(prevSuggestion =>
+                props.setSuggestion(prevSuggestion =>
                     prevSuggestion + (chunk.choices[0]?.delta?.content || "")
                 );
             }
         } catch (error) {
             console.error("Error fetching suggestion:", error);
-            setSuggestion("Failed to get suggestion. Please try again.");
+            props.setSuggestion("Failed to get suggestion. Please try again.");
         }
     }
 
     return (
-        <div>
-            <p className="suggestion">{suggestion}</p>
-            <div className="suggestion-buttons">
-                {suggestion &&
-                    <button onClick={() => props.copySuggestion(suggestion)}>
-                        Copy
-                    </button>
-                }
-                <button
-                    onClick={getSuggestion}
-                    disabled={!openai}  // disable if openai instance is not available
-                >
-                    {suggestion ? "Get New Suggestion" : "Get Suggestion"}
-                </button>
-            </div>
+        <div className="suggestion-container">
+            <button
+                className="top-button"
+                onClick={getSuggestion}
+                disabled={!openai}  // disable if openai instance is not available
+            >
+                {props.suggestion ? "Get New Suggestion" : "Get Suggestion"}
+            </button>
+
+            <div className="suggestion">{props.suggestion}</div>
+
+            <button
+                className="bottom-button"
+                onClick={() => props.setHasCopiedSuggestion(true)}
+                disabled={isCopyDisabled}
+            >
+                Copy
+            </button>
         </div>
     );
 }
