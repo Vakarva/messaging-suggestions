@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import "./ApiKeyLogin.css"
 
 export default function ApiKeyLogin(props: {
@@ -39,7 +39,7 @@ export default function ApiKeyLogin(props: {
     const submitApiKey = useCallback(async () => {
         const isValid = await checkAPIKeyValidity(props.apiKey);
         props.handleApiKeyChange(props.apiKey, isValid);
-    }, [props.apiKey, checkAPIKeyValidity, props.handleApiKeyChange]);
+    }, [props.apiKey, checkAPIKeyValidity]);
 
     return (
         <div className="api-key-container">
