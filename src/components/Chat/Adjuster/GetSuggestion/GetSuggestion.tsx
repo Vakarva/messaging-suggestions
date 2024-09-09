@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import OpenAI from "openai";
 import "./GetSuggestion.css"
-import { Role, Message } from "../../../../types/types";
+import SuggestionContext from "./SuggestionContext/SuggestionContext";
+import { ClaimContext, Message, Role } from "../../../../types/types";
 
 export default function GetSuggestion(props: {
     apiKey: string;
@@ -10,12 +11,7 @@ export default function GetSuggestion(props: {
     setSuggestion: React.Dispatch<React.SetStateAction<string>>;
 }) {
     const [openai, setOpenai] = useState<OpenAI | null>(null);
-    const [context, setContext] = useState({
-        claimId: "",
-        nextAppointment: null as Date | null,
-        nextPaymentAmount: null as number | null,
-        nextPaymentDate: null as Date | null
-    });
+    const [context, setContext] = useState(() => new ClaimContext());
 
     // Disable suggestion button if there's no OpenAI instance or if most recent message did not come from "user" (aka worker)
     const mostRecentRole = props.messages.length
@@ -25,17 +21,16 @@ export default function GetSuggestion(props: {
 
     // Construct new array, formatted for OpenAI API; memoized to avoid unnecessary recalculation
     const formattedMessages = useMemo(() => {
-        // Prompt how LLM ought to behave (include any knowledge it should have about GainLife)
         const systemMessage = {
             role: Role.system,
-            content: "You are a helpful insurance claims adjuster. You are aiding an injured worker and responding to any questions they have about their insurance case. Please respond in a way that is easy to read in a chat interface. Avoid using markdown such as bold, numbered lists, or headings. Keep your responses conversational and plain-text only, with short and simple sentences."
+            content: context.systemMessage
         };
 
         return [
             systemMessage,
             ...props.messages.map(({ role, content }) => ({ role, content })) // remove `id` field from `messages` array - LLM does not need it
         ];
-    }, [props.messages]);
+    }, [props.messages, context]);
 
     useEffect(() => {
         const openAIInstance = new OpenAI({
@@ -69,12 +64,19 @@ export default function GetSuggestion(props: {
     }
 
     return (
-        <button
-            className="top-button"
-            onClick={getSuggestion}
-            disabled={isSuggestionDisabled}
-        >
-            Get Suggested Response
-        </button>
+        <div className="get-suggestion-container">
+            <SuggestionContext
+                context={context}
+                setContext={setContext}
+            />
+
+            <button
+                className="top-button"
+                onClick={getSuggestion}
+                disabled={isSuggestionDisabled}
+            >
+                Get Suggested Response
+            </button>
+        </div >
     );
 }

@@ -15,7 +15,7 @@
 }
 
 .input-container {
-    flex-grow: 1;
+    justify-content: space-between;
 }
 
 .chat-history-container,
@@ -38,5 +38,4 @@
 .adjuster-input-container {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
 }

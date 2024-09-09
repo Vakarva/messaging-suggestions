@@ -14,9 +14,9 @@ export default function ChatInput(props: {
     // If `props.content` is passed down, fill `content` with it
     useEffect(() => {
         if (props.content) {
-            setContent(props.content)
+            setContent(props.content);
         }
-    }, [props.content])
+    }, [props.content]);
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -38,7 +38,6 @@ export default function ChatInput(props: {
                 onChange={handleTextareaChange}
             />
             <button
-                className="bottom-button"
                 type="submit"
                 disabled={content.trim() === ""}    // disable if content is empty or only whitespace
             >

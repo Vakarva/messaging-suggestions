@@ -34,6 +34,7 @@ body {
 
 button {
     border: none;
+    border-radius: 0px 0px 7px 7px;
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 500;
@@ -65,4 +66,12 @@ button:disabled:hover {
 
 button:disabled:active {
     box-shadow: none;
+}
+
+input:focus {
+    outline: none;
+}
+
+textarea:focus {
+    outline: none;
 }

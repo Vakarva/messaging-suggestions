@@ -48,22 +48,23 @@ export default function ApiKeyLogin(props: {
     }
 
     return (
-        <div className="apiKey-container">
+        <div className="api-key-container">
             {isValidKey === false &&
                 <div className="incorrect-key">
                     <p>Incorrect API Key: Please try again</p>
                 </div>
             }
-            <div className="apiKey-form">
-                <label htmlFor="api-key">OpenAI API Key:</label>
+            <div className="api-key-form">
+                <label htmlFor="api-key">Enter OpenAI API Key:</label>
                 <input
-                    id="api-key"
+                    id="api-key-form--input"
+                    className="api-key-form--input"
                     type="password"
                     name="apiKey"
                     ref={apiKeyRef}
                 />
                 <button
-                    className="apiKey-form--button"
+                    className="api-key-form--button"
                     onClick={submitApiKey}
                 >
                     Submit
