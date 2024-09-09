@@ -1,15 +1,17 @@
-import { useState, useRef } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./ApiKeyLogin.css"
 
 export default function ApiKeyLogin(props: {
-    setApiKey: (apiKey: string) => void
+    apiKey: string;
+    isValidKey: boolean | null;
+    handleApiKeyChange: (newApiKey: string, isValid: boolean | null) => void;
 }) {
-    const [isValidKey, setIsValidKey] = useState<boolean | null>(null);
+    useEffect(() => {
+        document.getElementById("api-key-form--input")?.focus();
+    }, []);
 
-    const apiKeyRef = useRef<HTMLInputElement>(null);
-
-    async function checkAPIKeyValidity(apiKey: string): Promise<boolean> {
-        const url = "https://api.openai.com/v1/models"; // Test with the models endpoint
+    const checkAPIKeyValidity = useCallback(async (apiKey: string): Promise<boolean> => {
+        const url = "https://api.openai.com/v1/models";
 
         try {
             const response = await fetch(url, {
@@ -20,14 +22,11 @@ export default function ApiKeyLogin(props: {
             });
 
             if (response.ok) {
-                // API key is valid
                 return true;
             } else if (response.status === 401) {
-                // API key is invalid
                 console.error("Invalid API Key");
                 return false;
             } else {
-                // Handle other error statuses
                 console.error("Error checking API Key:", response.status);
                 return false;
             }
@@ -35,25 +34,20 @@ export default function ApiKeyLogin(props: {
             console.error("Network error or invalid request:", error);
             return false;
         }
-    }
+    }, []);
 
-    async function submitApiKey() {
-        const apiKey = apiKeyRef.current?.value ?? ""; // Access the input value via the ref
-        const isValid = await checkAPIKeyValidity(apiKey);
-        setIsValidKey(isValid);
-
-        if (isValid) {
-            props.setApiKey(apiKey);
-        }
-    }
+    const submitApiKey = useCallback(async () => {
+        const isValid = await checkAPIKeyValidity(props.apiKey);
+        props.handleApiKeyChange(props.apiKey, isValid);
+    }, [props.apiKey, checkAPIKeyValidity, props.handleApiKeyChange]);
 
     return (
         <div className="api-key-container">
-            {isValidKey === false &&
+            {props.isValidKey === false && (
                 <div className="incorrect-key">
                     <p>Incorrect API Key: Please try again</p>
                 </div>
-            }
+            )}
             <div className="api-key-form">
                 <label htmlFor="api-key">Enter OpenAI API Key:</label>
                 <input
@@ -61,7 +55,8 @@ export default function ApiKeyLogin(props: {
                     className="api-key-form--input"
                     type="password"
                     name="apiKey"
-                    ref={apiKeyRef}
+                    value={props.apiKey}
+                    onChange={(e) => props.handleApiKeyChange(e.target.value, null)}
                 />
                 <button
                     className="api-key-form--button"

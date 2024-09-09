@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import OpenAI from "openai";
 import "./GetSuggestion.css"
 import SuggestionContext from "./SuggestionContext/SuggestionContext";
@@ -10,14 +10,14 @@ export default function GetSuggestion(props: {
     suggestion: string;
     setSuggestion: React.Dispatch<React.SetStateAction<string>>;
 }) {
-    const [openai, setOpenai] = useState<OpenAI | null>(null);
     const [context, setContext] = useState(() => new ClaimContext());
+    const openaiRef = useRef<OpenAI | null>(null);
 
     // Disable suggestion button if there's no OpenAI instance or if most recent message did not come from "user" (aka worker)
     const mostRecentRole = props.messages.length
         ? props.messages[props.messages.length - 1].role
         : null;
-    const isSuggestionDisabled = !openai || mostRecentRole !== Role.user;
+    const isSuggestionDisabled = !openaiRef.current || mostRecentRole !== Role.user;
 
     // Construct new array, formatted for OpenAI API; memoized to avoid unnecessary recalculation
     const formattedMessages = useMemo(() => {
@@ -33,21 +33,20 @@ export default function GetSuggestion(props: {
     }, [props.messages, context]);
 
     useEffect(() => {
-        const openAIInstance = new OpenAI({
+        openaiRef.current = new OpenAI({
             apiKey: props.apiKey,
-            dangerouslyAllowBrowser: true   // API Key will be visible locally, but the user enters their own API key
+            dangerouslyAllowBrowser: true   // Privacy concerns: API Key will be visible locally
         });
-        setOpenai(openAIInstance);
     }, [props.apiKey]); // recreate OpenAI instance only if API Key changes
 
     // Stream the LLMs response (adapted from: https://platform.openai.com/docs/api-reference/streaming)
     async function getSuggestion() {
-        if (!openai) return;    // ensure OpenAI instance is initialized
+        if (!openaiRef.current) return;    // ensure OpenAI instance is initialized
 
         props.setSuggestion("");  // clear previous suggestion (if it's still there) before starting a new stream
 
         try {
-            const stream = await openai.chat.completions.create({
+            const stream = await openaiRef.current.chat.completions.create({
                 model: "gpt-4o-mini",
                 messages: formattedMessages,
                 stream: true,
