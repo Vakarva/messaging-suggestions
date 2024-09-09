@@ -1,44 +1,37 @@
 import { useCallback, useEffect } from "react";
+import { OpenAI } from "openai";
 import "./ApiKeyLogin.css"
 
 export default function ApiKeyLogin(props: {
     apiKey: string;
-    isValidKey: boolean | null;
-    handleApiKeyChange: (newApiKey: string, isValid: boolean | null) => void;
+    isValidKey: boolean | undefined;
+    handleApiKeyChange: (newApiKey: string | undefined, isValid: boolean | undefined) => void;
 }) {
+    // Move focus to the API Key input field on first render
     useEffect(() => {
         document.getElementById("api-key-form--input")?.focus();
     }, []);
 
+    // Check if the API Key is valid by making a free request (listing models) to the OpenAI API
     const checkAPIKeyValidity = useCallback(async (apiKey: string): Promise<boolean> => {
-        const url = "https://api.openai.com/v1/models";
+        const openai = new OpenAI({
+            apiKey: apiKey,
+            dangerouslyAllowBrowser: true
+        });
 
         try {
-            const response = await fetch(url, {
-                headers: {
-                    "Authorization": `Bearer ${apiKey}`,
-                    "Content-Type": "application/json",
-                },
-            });
-
-            if (response.ok) {
-                return true;
-            } else if (response.status === 401) {
-                console.error("Invalid API Key");
-                return false;
-            } else {
-                console.error("Error checking API Key:", response.status);
-                return false;
-            }
+            const response = await openai.models.list();
+            return response.data.length > 0;
         } catch (error) {
-            console.error("Network error or invalid request:", error);
+            console.error(error);
             return false;
         }
     }, []);
 
+    // Check if the API Key is valid
     const submitApiKey = useCallback(async () => {
         const isValid = await checkAPIKeyValidity(props.apiKey);
-        props.handleApiKeyChange(props.apiKey, isValid);
+        props.handleApiKeyChange(undefined, isValid);   // apiKey is already stored in state, so pass undefined
     }, [props.apiKey, checkAPIKeyValidity]);
 
     return (
@@ -56,7 +49,7 @@ export default function ApiKeyLogin(props: {
                     type="password"
                     name="apiKey"
                     value={props.apiKey}
-                    onChange={(e) => props.handleApiKeyChange(e.target.value, null)}
+                    onChange={(e) => props.handleApiKeyChange(e.target.value, undefined)}
                 />
                 <button
                     className="api-key-form--button"
