@@ -5,9 +5,9 @@ export enum Role {
 }
 
 export interface Message {
-    id: string;
-    role: Role;
     content: string;
+    createdAt: string;
+    role: Role;
 }
 
 export class ClaimContext {

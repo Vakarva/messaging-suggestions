@@ -1,4 +1,5 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { Button, Input } from "@mantine/core";
 import { OpenAI } from "openai";
 import "./ApiKeyLogin.css"
 
@@ -7,9 +8,11 @@ export default function ApiKeyLogin(props: {
     isValidKey: boolean | undefined;
     handleApiKeyChange: (newApiKey: string | undefined, isValid: boolean | undefined) => void;
 }) {
+    const apiKeyInputRef = useRef<HTMLInputElement>(null);
+
     // Move focus to the API Key input field on first render
     useEffect(() => {
-        document.getElementById("api-key-form--input")?.focus();
+        apiKeyInputRef.current?.focus();
     }, []);
 
     // Check if the API Key is valid by making a free request (listing models) to the OpenAI API
@@ -42,21 +45,38 @@ export default function ApiKeyLogin(props: {
                 </div>
             )}
             <div className="api-key-form">
-                <label htmlFor="api-key">Enter OpenAI API Key:</label>
-                <input
+                {/* <label htmlFor="api-key">Enter OpenAI API Key:</label> */}
+                {/* <input
                     id="api-key-form--input"
                     className="api-key-form--input"
                     type="password"
                     name="apiKey"
+                    ref={apiKeyInputRef}
                     value={props.apiKey}
                     onChange={(e) => props.handleApiKeyChange(e.target.value, undefined)}
-                />
-                <button
+                /> */}
+                <Input.Wrapper
+                    error={props.isValidKey === false ? "Incorrect API Key: Please try again" : undefined}
+                    label="Enter OpenAI API Key:"
+                >
+                    <Input
+                        placeholder="Your API key here"
+                        id="api-key-form--input"
+                        className="api-key-form--input"
+                        type="password"
+                        name="apiKey"
+                        ref={apiKeyInputRef}
+                        value={props.apiKey}
+                        onChange={(e) => props.handleApiKeyChange(e.target.value, undefined)}
+
+                    />
+                </Input.Wrapper>
+                <Button
                     className="api-key-form--button"
                     onClick={submitApiKey}
                 >
                     Submit
-                </button>
+                </Button>
             </div>
         </div>
     );

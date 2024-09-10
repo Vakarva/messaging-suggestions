@@ -10,7 +10,7 @@ export default function ChatHistory(props: {
 
     const messageElements = props.messages.map(message =>
         <div
-            key={message.id}
+            key={message.createdAt}
             className={classNames("message-box", { "message-box--assistant": message.role == Role.assistant })}
         >
             {message.content}

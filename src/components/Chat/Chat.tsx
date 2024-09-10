@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { nanoid } from 'nanoid';
 import './Chat.css';
 import { Role, Message } from "../../types/types";
 import ChatInput from "./ChatInput/ChatInput";
@@ -13,7 +12,7 @@ export default function Chat(props: {
 
     function addMessage(content: string, role: Role) {
         setMessages(oldMessages =>
-            [...oldMessages, { id: nanoid(), content: content, role: role }]
+            [...oldMessages, { content, createdAt: new Date().toISOString(), role }]
         )
     }
 
