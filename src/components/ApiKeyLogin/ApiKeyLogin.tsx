@@ -39,22 +39,7 @@ export default function ApiKeyLogin(props: {
 
     return (
         <div className="api-key-container">
-            {props.isValidKey === false && (
-                <div className="incorrect-key">
-                    <p>Incorrect API Key: Please try again</p>
-                </div>
-            )}
             <div className="api-key-form">
-                {/* <label htmlFor="api-key">Enter OpenAI API Key:</label> */}
-                {/* <input
-                    id="api-key-form--input"
-                    className="api-key-form--input"
-                    type="password"
-                    name="apiKey"
-                    ref={apiKeyInputRef}
-                    value={props.apiKey}
-                    onChange={(e) => props.handleApiKeyChange(e.target.value, undefined)}
-                /> */}
                 <Input.Wrapper
                     error={props.isValidKey === false ? "Incorrect API Key: Please try again" : undefined}
                     label="API Key"

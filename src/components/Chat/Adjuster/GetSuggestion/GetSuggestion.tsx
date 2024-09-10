@@ -11,7 +11,7 @@ export default function GetSuggestion(props: {
     setSuggestion: React.Dispatch<React.SetStateAction<string>>;
 }) {
     const [context, setContext] = useState(() => new ClaimContext());
-    const openaiRef = useRef<OpenAI | null>(null);
+    const openaiRef = useRef<OpenAI | undefined>(undefined);
 
     // Disable suggestion button if there's no OpenAI instance or if most recent message did not come from "user" (aka worker)
     const mostRecentRole = props.messages.length
@@ -28,7 +28,7 @@ export default function GetSuggestion(props: {
 
         return [
             systemMessage,
-            ...props.messages.map(({ role, content }) => ({ role, content })) // remove `id` field from `messages` array - LLM does not need it
+            ...props.messages.map(({ role, content }) => ({ role, content })) // remove `createdAt` field from `messages` array - LLM does not need it
         ];
     }, [props.messages, context]);
 
