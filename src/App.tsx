@@ -24,8 +24,8 @@ export default function App() {
             {!isValidKey
                 ? <ApiKeyLogin
                     apiKey={apiKey}
-                    isValidKey={isValidKey}
                     handleApiKeyChange={handleApiKeyChange}
+                    isValidKey={isValidKey}
                 />
                 : <Chat
                     apiKey={apiKey}

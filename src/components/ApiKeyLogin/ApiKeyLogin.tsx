@@ -5,8 +5,8 @@ import "./ApiKeyLogin.css"
 
 export default function ApiKeyLogin(props: {
     apiKey: string;
+    handleApiKeyChange: (newApiKey?: string, isValid?: boolean) => void;
     isValidKey: boolean | undefined;
-    handleApiKeyChange: (newApiKey: string | undefined, isValid: boolean | undefined) => void;
 }) {
     const apiKeyInputRef = useRef<HTMLInputElement>(null);
 
@@ -57,18 +57,16 @@ export default function ApiKeyLogin(props: {
                 /> */}
                 <Input.Wrapper
                     error={props.isValidKey === false ? "Incorrect API Key: Please try again" : undefined}
-                    label="Enter OpenAI API Key:"
+                    label="API Key"
                 >
                     <Input
-                        placeholder="Your API key here"
-                        id="api-key-form--input"
                         className="api-key-form--input"
-                        type="password"
+                        id="api-key-form--input"
                         name="apiKey"
-                        ref={apiKeyInputRef}
-                        value={props.apiKey}
                         onChange={(e) => props.handleApiKeyChange(e.target.value, undefined)}
-
+                        ref={apiKeyInputRef}
+                        type="password"
+                        value={props.apiKey}
                     />
                 </Input.Wrapper>
                 <Button
