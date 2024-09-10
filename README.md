@@ -14,3 +14,4 @@ This application simulates a chat session between an Injured Worker and a Claims
 2. Click the "Submit" button
 3. Write messages as the 'Worker' and as the 'Adjuster'
 4. The 'Adjuster' has the option of generating an LLM suggested response
+5. The 'Adjuster' can add additional context via additional fields
