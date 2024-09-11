@@ -1,36 +1,86 @@
-import { useState } from 'react';
-import ApiKeyLogin from "./components/ApiKeyLogin/ApiKeyLogin"
-import Chat from './components/Chat/Chat'
+import { useEffect, useMemo, useState } from "react";
+import { Modal } from "@mantine/core";
+import ApiKeyLogin from "@components/ApiKeyLogin/ApiKeyLogin";
+import Chat from "@components/Chat/Chat";
+import { createLLMProvider, LLMProviderName } from "@custom-types";
 
 export default function App() {
     const [apiKey, setApiKey] = useState("");
-    const [isValidKey, setIsValidKey] = useState<boolean | undefined>(undefined);
+    const [isValidKey, setIsValidKey] = useState<boolean | undefined>(
+        undefined
+    );
     /* isValidKey:
         true: loads Chat component
         false: displays error message (incorrect API Key)
         undefined: no action taken yet (initial state, no error message)
     */
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [providerName, setProviderName] = useState<LLMProviderName>(
+        LLMProviderName.openai
+    );
 
-    // Updates the API Key (if provided) and the validity of the API Key
-    const handleApiKeyChange = (newApiKey?: string, isValid?: boolean) => {
-        if (newApiKey !== undefined) {
-            setApiKey(newApiKey);
+    const provider = useMemo(() => {
+        try {
+            return createLLMProvider(providerName, apiKey);
+        } catch (error) {
+            console.error(error);
+            return createLLMProvider(providerName, "");
         }
-        setIsValidKey(isValid);
-    }
+    }, [isSubmitting]);
+
+    useEffect(() => {
+        if (!isSubmitting) return;
+
+        const validateApiKey = async () => {
+            try {
+                const isValid = await provider.checkApiKey();
+                setIsValidKey(isValid);
+            } catch (error) {
+                console.error(error);
+                setIsValidKey(false); // key is invalid
+            } finally {
+                setIsSubmitting(false);
+            }
+        };
+
+        validateApiKey();
+    }, [isSubmitting]);
 
     return (
         <main>
-            {!isValidKey
-                ? <ApiKeyLogin
+            <Modal
+                centered
+                closeOnClickOutside={false}
+                closeOnEscape={false}
+                onClose={() => {}}
+                opened={!isValidKey}
+                overlayProps={{
+                    blur: 3,
+                }}
+                size="xs"
+                styles={{
+                    title: {
+                        fontWeight: "bold",
+                        margin: "0",
+                        padding: "0",
+                    },
+                }}
+                title="Enter API Key"
+                withCloseButton={false}
+            >
+                <ApiKeyLogin
                     apiKey={apiKey}
-                    handleApiKeyChange={handleApiKeyChange}
                     isValidKey={isValidKey}
+                    isSubmitting={isSubmitting}
+                    providerName={providerName}
+                    setApiKey={setApiKey}
+                    setIsSubmitting={setIsSubmitting}
+                    setIsValidKey={setIsValidKey}
+                    setProviderName={setProviderName}
                 />
-                : <Chat
-                    apiKey={apiKey}
-                />
-            }
+            </Modal>
+
+            <Chat provider={provider} />
         </main>
     );
 }

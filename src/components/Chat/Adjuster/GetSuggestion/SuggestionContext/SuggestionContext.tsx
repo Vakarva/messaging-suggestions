@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { ClaimContext } from "../../../../../types/types"
-import "./SuggestionContext.css"
+import { Button } from "@mantine/core";
+import { IconSettings } from "@tabler/icons-react";
+import { ClaimContext } from "../../../../../custom-types/custom-types";
+import "./SuggestionContext.css";
 
 export default function SuggestionContext(props: {
     context: ClaimContext;
@@ -9,26 +11,24 @@ export default function SuggestionContext(props: {
     const [isVisible, setIsVisible] = useState(false);
 
     function toggleVisibility() {
-        setIsVisible(prevIsVisible => !prevIsVisible);
+        setIsVisible((prevIsVisible) => !prevIsVisible);
     }
 
     function updateContext(e: React.ChangeEvent<HTMLInputElement>) {
         const { name, value } = e.target;
 
-        props.setContext(prevContext =>
-            Object.assign(
-                new ClaimContext(),
-                prevContext,
-                { [name]: value }
-            )
+        props.setContext((prevContext) =>
+            Object.assign(new ClaimContext(), prevContext, { [name]: value })
         );
     }
 
     return (
         <div className="suggestion-settings">
-            <button onClick={toggleVisibility}>Settings</button>
+            <Button justify="left" onClick={toggleVisibility} variant="default">
+                <IconSettings />
+            </Button>
 
-            {isVisible &&
+            {isVisible && (
                 <div className="suggestion-context">
                     <div className="suggestion-context--item">
                         <label htmlFor="claim-id">Claim ID:</label>
@@ -42,7 +42,9 @@ export default function SuggestionContext(props: {
                         />
                     </div>
                     <div className="suggestion-context--item">
-                        <label htmlFor="next-appointment">Next appointment:</label>
+                        <label htmlFor="next-appointment">
+                            Next appointment:
+                        </label>
                         <input
                             id="next-appointment"
                             name="nextAppointment"
@@ -52,7 +54,9 @@ export default function SuggestionContext(props: {
                         />
                     </div>
                     <div className="suggestion-context--item">
-                        <label htmlFor="next-payment-amount">Next payment amount:</label>
+                        <label htmlFor="next-payment-amount">
+                            Next payment amount:
+                        </label>
                         <input
                             id="next-payment-amount"
                             name="nextPaymentAmount"
@@ -63,7 +67,9 @@ export default function SuggestionContext(props: {
                         />
                     </div>
                     <div className="suggestion-context--item">
-                        <label htmlFor="next-payment-date">Next payment date:</label>
+                        <label htmlFor="next-payment-date">
+                            Next payment date:
+                        </label>
                         <input
                             id="next-payment-date"
                             name="nextPaymentDate"
@@ -72,8 +78,8 @@ export default function SuggestionContext(props: {
                             onChange={updateContext}
                         />
                     </div>
-                </div >
-            }
+                </div>
+            )}
         </div>
     );
 }

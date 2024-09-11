@@ -1,19 +1,22 @@
-import { useState } from 'react';
-import './Chat.css';
-import { Role, Message } from "../../types/types";
-import ChatInput from "./ChatInput/ChatInput";
-import ChatHistory from "./ChatHistory/ChatHistory";
-import Adjuster from "./Adjuster/Adjuster";
+import { useState } from "react";
+import "./Chat.css";
+import { Role, Message, LLMProvider } from "@custom-types";
+import ChatInput from "@components/Chat/ChatInput/ChatInput";
+import ChatHistory from "@components/Chat/ChatHistory/ChatHistory";
+import Adjuster from "@components/Chat/Adjuster/Adjuster";
 
-export default function Chat(props: {
-    apiKey: string
-}) {
+interface ChatProps {
+    provider: LLMProvider;
+}
+
+export default function Chat({ provider }: ChatProps) {
     const [messages, setMessages] = useState<Message[]>([]);
 
     function addMessage(content: string, role: Role) {
-        setMessages(oldMessages =>
-            [...oldMessages, { content, createdAt: new Date().toISOString(), role }]
-        )
+        setMessages((oldMessages) => [
+            ...oldMessages,
+            { content, createdAt: new Date().toISOString(), role },
+        ]);
     }
 
     return (
@@ -24,17 +27,14 @@ export default function Chat(props: {
 
             <div className="input-container">
                 <div className="worker-input-container">
-                    <ChatInput
-                        addMessage={addMessage}
-                        role={Role.user}
-                    />
+                    <ChatInput addMessage={addMessage} role={Role.user} />
                 </div>
 
                 <div className="adjuster-input-container">
                     <Adjuster
                         addMessage={addMessage}
-                        apiKey={props.apiKey}
                         messages={messages}
+                        provider={provider}
                     />
                 </div>
             </div>

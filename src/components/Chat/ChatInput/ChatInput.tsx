@@ -1,27 +1,32 @@
 import { useEffect, useState } from "react";
 import "./ChatInput.css";
-import { Role } from "../../../types/types";
+import { Role } from "@custom-types";
 
-export default function ChatInput(props: {
+interface ChatInputProps {
     addMessage: (content: string, role: Role) => void;
+    insertedContent?: string;
     role: Role;
-    content?: string;
-}) {
+}
+export default function ChatInput({
+    addMessage,
+    insertedContent,
+    role,
+}: ChatInputProps) {
     const [content, setContent] = useState("");
 
-    const sendAs = props.role === Role.user ? "Worker" : "Adjuster";
+    const sendAs = role === Role.user ? "Worker" : "Adjuster";
 
-    // If `props.content` is passed down, fill `content` with it
+    // If `insertedContent` is passed down, fill `content` with it
     useEffect(() => {
-        if (props.content) {
-            setContent(props.content);
+        if (insertedContent) {
+            setContent(insertedContent);
         }
-    }, [props.content]);
+    }, [insertedContent]);
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        props.addMessage(content.trim(), props.role);   // trim content of unnecessary whitespace before adding to conversation
+        addMessage(content.trim(), role); // trim content of unnecessary whitespace before adding to conversation
         setContent(""); // clear the content box
     }
 
@@ -30,16 +35,16 @@ export default function ChatInput(props: {
     }
 
     return (
-        <form className="message-form" onSubmit={handleSubmit} >
+        <form className="message-form" onSubmit={handleSubmit}>
             <textarea
-                className={`message-form--textarea message-form--textarea--${props.role}`}
-                name={`${props.role}Message`}
+                className={`message-form--textarea message-form--textarea--${role}`}
+                name={`${role}Message`}
                 value={content}
                 onChange={handleTextareaChange}
             />
             <button
                 type="submit"
-                disabled={content.trim() === ""}    // disable if content is empty or only whitespace
+                disabled={content.trim() === ""} // disable if content is empty or only whitespace
             >
                 Send as {sendAs}
             </button>
