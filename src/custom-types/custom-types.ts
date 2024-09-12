@@ -93,26 +93,22 @@ export enum LLMProviderName {
 export abstract class LLMProvider {
     name: LLMProviderName;
     apiKey: string;
+    context: ClaimContext;
     model: string = "";
 
-    static models: string[] = [];
+    models: string[] = [];
 
     protected instance: any;
 
-    constructor(name: LLMProviderName, apiKey: string) {
+    constructor(name: LLMProviderName, apiKey: string, context: ClaimContext) {
         this.name = name;
         this.apiKey = apiKey;
+        this.context = context;
     }
-
-    protected abstract formatMessages(
-        context: ClaimContext,
-        messages: Message[]
-    ): any[];
 
     abstract checkApiKey(): Promise<boolean>;
 
     abstract getSuggestion(
-        context: ClaimContext,
         messages: Message[],
         setSuggestion: React.Dispatch<React.SetStateAction<string>>
     ): Promise<void>;
@@ -120,26 +116,15 @@ export abstract class LLMProvider {
 
 import Anthropic from "@anthropic-ai/sdk";
 export class AnthropicClient extends LLMProvider {
-    static models: string[] = [
-        "claude-3-opus-20240229",
-        "claude-3-5-sonnet-20240620",
-    ];
+    models: string[] = ["claude-3-opus-20240229", "claude-3-5-sonnet-20240620"];
 
-    constructor(apiKey: string) {
-        super(LLMProviderName.openai, apiKey);
+    constructor(apiKey: string, context: ClaimContext) {
+        super(LLMProviderName.openai, apiKey, context);
         this.instance = new Anthropic({
             apiKey: this.apiKey,
             dangerouslyAllowBrowser: true,
         });
-        this.model = AnthropicClient.models[0];
-    }
-
-    protected formatMessages(
-        context: ClaimContext,
-        messages: Message[]
-    ): any[] {
-        // TODO: Implement
-        return [];
+        this.model = this.models[0];
     }
 
     async checkApiKey(): Promise<boolean> {
@@ -149,7 +134,6 @@ export class AnthropicClient extends LLMProvider {
     }
 
     async getSuggestion(
-        context: ClaimContext,
         messages: Message[],
         setSuggestion: React.Dispatch<React.SetStateAction<string>>
     ): Promise<void> {
@@ -166,24 +150,21 @@ interface OpenAIMessage {
 }
 
 export class OpenAIClient extends LLMProvider {
-    static models: string[] = ["gpt-4o-mini", "gpt-4o"];
+    models: string[] = ["gpt-4o-mini", "gpt-4o"];
 
-    constructor(apiKey: string) {
-        super(LLMProviderName.openai, apiKey);
+    constructor(apiKey: string, context: ClaimContext) {
+        super(LLMProviderName.openai, apiKey, context);
         this.instance = new OpenAI({
             apiKey: this.apiKey,
             dangerouslyAllowBrowser: true,
         });
-        this.model = OpenAIClient.models[0];
+        this.model = this.models[0];
     }
 
-    protected formatMessages(
-        context: ClaimContext,
-        messages: Message[]
-    ): OpenAIMessage[] {
+    protected formatMessages(messages: Message[]): OpenAIMessage[] {
         const systemMessage = {
             role: Role.system,
-            content: context.systemMessage,
+            content: this.context.systemMessage,
         };
 
         return [
@@ -198,11 +179,10 @@ export class OpenAIClient extends LLMProvider {
     }
 
     async getSuggestion(
-        context: ClaimContext,
         messages: Message[],
         setSuggestion: React.Dispatch<React.SetStateAction<string>>
     ): Promise<void> {
-        const formattedMessages = this.formatMessages(context, messages);
+        const formattedMessages = this.formatMessages(messages);
 
         // Adapted from: https://platform.openai.com/docs/api-reference/streaming
         const stream = await this.instance.chat.completions.create({
@@ -222,13 +202,14 @@ export class OpenAIClient extends LLMProvider {
 
 export function createLLMProvider(
     providerName: LLMProviderName,
-    apiKey: string
+    apiKey: string,
+    context: ClaimContext
 ): LLMProvider {
     switch (providerName) {
         case LLMProviderName.openai:
-            return new OpenAIClient(apiKey);
+            return new OpenAIClient(apiKey, context);
         case LLMProviderName.anthropic:
-            return new AnthropicClient(apiKey);
+            return new AnthropicClient(apiKey, context);
         default:
             throw new Error(`Unsupported LLM provider: ${providerName}`);
     }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import "./ChatInput.css";
+import { ActionIcon, Group, Textarea, useMantineTheme } from "@mantine/core";
+import { IconArrowUp } from "@tabler/icons-react";
 import { Role } from "@custom-types";
 
 interface ChatInputProps {
@@ -13,8 +14,6 @@ export default function ChatInput({
     role,
 }: ChatInputProps) {
     const [content, setContent] = useState("");
-
-    const sendAs = role === Role.user ? "Worker" : "Adjuster";
 
     // If `insertedContent` is passed down, fill `content` with it
     useEffect(() => {
@@ -35,19 +34,24 @@ export default function ChatInput({
     }
 
     return (
-        <form className="message-form" onSubmit={handleSubmit}>
-            <textarea
-                className={`message-form--textarea message-form--textarea--${role}`}
+        <form onSubmit={handleSubmit}>
+            <Textarea
                 name={`${role}Message`}
                 value={content}
                 onChange={handleTextareaChange}
+                variant="filled"
+                styles={{ input: { backgroundColor: "transparent" } }}
             />
-            <button
+            <ActionIcon
                 type="submit"
                 disabled={content.trim() === ""} // disable if content is empty or only whitespace
+                radius="xl"
+                size="lg"
+                mr="md"
+                maw={30}
             >
-                Send as {sendAs}
-            </button>
+                <IconArrowUp />
+            </ActionIcon>
         </form>
     );
 }

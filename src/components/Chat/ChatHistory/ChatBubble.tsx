@@ -19,15 +19,13 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
     return (
         <Flex align="flex-end" direction="column">
             <Paper
+                bg={isUser ? theme.colors.gray[2] : theme.colors.blue[7]}
+                c={isUser ? theme.black : theme.white}
                 p="xs"
                 shadow="xs"
+                w="fit-content"
                 styles={{
                     root: {
-                        backgroundColor: isUser
-                            ? theme.colors.gray[2]
-                            : theme.colors.blue[7],
-                        color: isUser ? theme.black : theme.white,
-                        width: "fit-content",
                         ...(!isUser && { borderBottomRightRadius: "0" }),
                         ...(isUser && { borderBottomLeftRadius: "0" }),
                     },

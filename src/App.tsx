@@ -1,11 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { Modal } from "@mantine/core";
+
+import {
+    ClaimContext,
+    createLLMProvider,
+    LLMProviderName,
+} from "@custom-types";
+
 import ApiKeyLogin from "@components/ApiKeyLogin/ApiKeyLogin";
-import Chat from "@components/Chat/Chat";
-import { createLLMProvider, LLMProviderName } from "@custom-types";
+import ChatApp from "@components/Chat/ChatApp";
 
 export default function App() {
     const [apiKey, setApiKey] = useState("");
+    const [context, setContext] = useState<ClaimContext>(
+        () => new ClaimContext()
+    );
     const [isValidKey, setIsValidKey] = useState<boolean | undefined>(
         undefined
     );
@@ -21,12 +30,12 @@ export default function App() {
 
     const provider = useMemo(() => {
         try {
-            return createLLMProvider(providerName, apiKey);
+            return createLLMProvider(providerName, apiKey, context);
         } catch (error) {
             console.error(error);
-            return createLLMProvider(providerName, "");
+            return createLLMProvider(providerName, "", context);
         }
-    }, [isSubmitting]);
+    }, [isSubmitting, context]);
 
     useEffect(() => {
         if (!isSubmitting) return;
@@ -80,7 +89,11 @@ export default function App() {
                 />
             </Modal>
 
-            <Chat provider={provider} />
+            <ChatApp
+                context={context}
+                provider={provider}
+                setContext={setContext}
+            />
         </main>
     );
 }

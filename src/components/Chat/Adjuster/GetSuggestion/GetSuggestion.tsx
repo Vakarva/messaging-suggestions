@@ -1,24 +1,21 @@
-import { useState } from "react";
 import { ActionIcon, Tooltip } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconBrain } from "@tabler/icons-react";
-import SuggestionContext from "@components/Chat/Adjuster/GetSuggestion/SuggestionContext/SuggestionContext";
-import { ClaimContext, LLMProvider, Message, Role } from "@custom-types";
+import { LLMProvider, Message, Role } from "@custom-types";
 
 interface GetSuggestionProps {
     messages: Message[];
     provider: LLMProvider;
+    suggestion: string;
     setSuggestion: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function GetSuggestion({
     messages,
     provider,
+    suggestion,
     setSuggestion,
 }: GetSuggestionProps) {
-    const [context, setContext] = useState<ClaimContext>(
-        () => new ClaimContext()
-    );
     const [isLoading, { open, close }] = useDisclosure(false);
 
     // Disable suggestion button if most recent message did not come from "user" (aka worker)
@@ -33,7 +30,7 @@ export default function GetSuggestion({
         open();
 
         try {
-            await provider.getSuggestion(context, messages, setSuggestion);
+            await provider.getSuggestion(messages, setSuggestion);
         } catch (error) {
             console.error("Error fetching suggestion:", error);
             setSuggestion("Failed to get suggestion. Please try again.");
@@ -44,13 +41,15 @@ export default function GetSuggestion({
 
     return (
         <>
-            <SuggestionContext context={context} setContext={setContext} />
-
-            <Tooltip label="Get suggested response">
+            <Tooltip
+                label={`Generate ${suggestion ? "new" : ""} suggested response`}
+            >
                 <ActionIcon
                     disabled={isSuggestionDisabled}
                     loading={isLoading}
                     gradient={{ from: "violet", to: "cyan", deg: 135 }}
+                    maw={30}
+                    ml="xs"
                     onClick={getSuggestion}
                     size="xl"
                     variant="gradient"
