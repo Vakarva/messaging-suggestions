@@ -24,15 +24,17 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
                 c={isUser ? theme.black : theme.white}
                 p="xs"
                 shadow="xs"
-                w="fit-content"
                 styles={{
                     root: {
                         ...(!isUser && { borderBottomRightRadius: "0" }),
                         ...(isUser && { borderBottomLeftRadius: "0" }),
                     },
                 }}
+                w="100%"
             >
-                <Text size="lg">{message.content}</Text>
+                <Text size="lg" style={{ wordBreak: "break-all" }}>
+                    {message.content}
+                </Text>
             </Paper>
             <Badge color="gray" size="xs" variant="transparent">
                 {time}

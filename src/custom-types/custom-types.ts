@@ -94,16 +94,22 @@ export abstract class LLMProvider {
     name: LLMProviderName;
     apiKey: string;
     context: ClaimContext;
-    model: string = "";
+    model: string;
 
-    models: string[] = [];
+    availableModels: string[] = [];
 
     protected instance: any;
 
-    constructor(name: LLMProviderName, apiKey: string, context: ClaimContext) {
+    constructor(
+        name: LLMProviderName,
+        apiKey: string,
+        context: ClaimContext,
+        model: string = ""
+    ) {
         this.name = name;
         this.apiKey = apiKey;
         this.context = context;
+        this.model = model;
     }
 
     abstract checkApiKey(): Promise<boolean>;
@@ -116,15 +122,18 @@ export abstract class LLMProvider {
 
 import Anthropic from "@anthropic-ai/sdk";
 export class AnthropicClient extends LLMProvider {
-    models: string[] = ["claude-3-opus-20240229", "claude-3-5-sonnet-20240620"];
+    availableModels: string[] = [
+        "claude-3-opus-20240229",
+        "claude-3-5-sonnet-20240620",
+    ];
 
-    constructor(apiKey: string, context: ClaimContext) {
+    constructor(apiKey: string, context: ClaimContext, model: string) {
         super(LLMProviderName.openai, apiKey, context);
         this.instance = new Anthropic({
             apiKey: this.apiKey,
             dangerouslyAllowBrowser: true,
         });
-        this.model = this.models[0];
+        this.model = model;
     }
 
     async checkApiKey(): Promise<boolean> {
@@ -150,15 +159,15 @@ interface OpenAIMessage {
 }
 
 export class OpenAIClient extends LLMProvider {
-    models: string[] = ["gpt-4o-mini", "gpt-4o"];
+    availableModels: string[] = ["gpt-4o-mini", "gpt-4o"];
 
-    constructor(apiKey: string, context: ClaimContext) {
+    constructor(apiKey: string, context: ClaimContext, model: string) {
         super(LLMProviderName.openai, apiKey, context);
         this.instance = new OpenAI({
             apiKey: this.apiKey,
             dangerouslyAllowBrowser: true,
         });
-        this.model = this.models[0];
+        this.model = model;
     }
 
     protected formatMessages(messages: Message[]): OpenAIMessage[] {
@@ -203,13 +212,14 @@ export class OpenAIClient extends LLMProvider {
 export function createLLMProvider(
     providerName: LLMProviderName,
     apiKey: string,
-    context: ClaimContext
+    context: ClaimContext,
+    model: string
 ): LLMProvider {
     switch (providerName) {
         case LLMProviderName.openai:
-            return new OpenAIClient(apiKey, context);
+            return new OpenAIClient(apiKey, context, model);
         case LLMProviderName.anthropic:
-            return new AnthropicClient(apiKey, context);
+            return new AnthropicClient(apiKey, context, model);
         default:
             throw new Error(`Unsupported LLM provider: ${providerName}`);
     }

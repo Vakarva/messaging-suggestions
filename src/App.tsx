@@ -24,18 +24,19 @@ export default function App() {
         undefined: no action taken yet (initial state, no error message)
     */
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [model, setModel] = useState<string>("gpt-4o-mini");
     const [providerName, setProviderName] = useState<LLMProviderName>(
         LLMProviderName.openai
     );
 
     const provider = useMemo(() => {
         try {
-            return createLLMProvider(providerName, apiKey, context);
+            return createLLMProvider(providerName, apiKey, context, model);
         } catch (error) {
             console.error(error);
-            return createLLMProvider(providerName, "", context);
+            return createLLMProvider(providerName, "", context, model);
         }
-    }, [isSubmitting, context]);
+    }, [context, isSubmitting, model]);
 
     useEffect(() => {
         if (!isSubmitting) return;
@@ -93,6 +94,7 @@ export default function App() {
                 context={context}
                 provider={provider}
                 setContext={setContext}
+                setModel={setModel}
             />
         </main>
     );

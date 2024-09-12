@@ -15,9 +15,9 @@ export default function ChatHistory({ messages }: ChatHistoryProps) {
     const messageElements = messages.map((message) => (
         <Box
             key={message.createdAt.toISOString()}
-            maw="85%"
             ml={message.role == Role.user ? "0" : "auto"}
             mr={message.role == Role.user ? "auto" : "0"}
+            maw="85%"
         >
             <ChatBubble message={message} />
         </Box>

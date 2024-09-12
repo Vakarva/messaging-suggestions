@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Stack, Tabs } from "@mantine/core";
-import { IconTool, IconUserFilled } from "@tabler/icons-react";
+import { Stack, Tabs, ThemeIcon } from "@mantine/core";
+import { IconHeartbeat, IconUserFilled } from "@tabler/icons-react";
 
 import { Message, Role, LLMProvider } from "@custom-types";
 
@@ -24,12 +24,39 @@ export default function ToggleRole({
             <Tabs value={activeTab} onChange={setActiveTab}>
                 <Tabs.List grow>
                     <Tabs.Tab
-                        leftSection={<IconUserFilled />}
+                        leftSection={
+                            <ThemeIcon
+                                color="teal"
+                                gradient={{
+                                    from: "gray",
+                                    to: "blue",
+                                    deg: 135,
+                                }}
+                                variant="gradient"
+                            >
+                                <IconUserFilled />
+                            </ThemeIcon>
+                        }
                         value={Role.user}
                     >
                         Worker
                     </Tabs.Tab>
-                    <Tabs.Tab leftSection={<IconTool />} value={Role.assistant}>
+                    <Tabs.Tab
+                        leftSection={
+                            <ThemeIcon
+                                color="red"
+                                gradient={{
+                                    from: "red",
+                                    to: "yellow",
+                                    deg: 135,
+                                }}
+                                variant="gradient"
+                            >
+                                <IconHeartbeat />
+                            </ThemeIcon>
+                        }
+                        value={Role.assistant}
+                    >
                         Adjuster
                     </Tabs.Tab>
                 </Tabs.List>

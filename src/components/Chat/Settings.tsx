@@ -8,20 +8,25 @@ import {
     TextInput,
 } from "@mantine/core";
 
-import { ClaimContext } from "@custom-types";
+import { ClaimContext, LLMProvider } from "@custom-types";
 
 interface SettingsProps {
     close: () => void;
     context: ClaimContext;
+    provider: LLMProvider;
     setContext: React.Dispatch<React.SetStateAction<ClaimContext>>;
+    setModel: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function Settings({
     close,
     context,
+    provider,
     setContext,
+    setModel,
 }: SettingsProps) {
     const [tempContext, setTempContext] = useState<ClaimContext>(context);
+    const [tempModel, setTempModel] = useState<string>(provider.model);
 
     function updateTempContext(e: React.ChangeEvent<HTMLInputElement>) {
         const { name, value } = e.target;
@@ -79,23 +84,25 @@ export default function Settings({
                     />
                 </Stack>
             </Fieldset>
-            <Fieldset legend="LLM Settings">
-                <Stack>
-                    <Select
-                        allowDeselect={false}
-                        data={["gpt-4o-mini", "gpt-4o"]}
-                        defaultValue={"gpt-4o-mini"}
-                    />
-                </Stack>
+            <Fieldset legend="LLM Behavior">
+                <Select
+                    allowDeselect={false}
+                    data={provider.availableModels}
+                    onChange={(value) => setTempModel(value!)}
+                    value={tempModel}
+                    label="Model"
+                />
             </Fieldset>
             <Button
                 ml="auto"
                 onClick={() => {
                     setContext(tempContext);
+                    setModel(tempModel);
                     close();
                 }}
+                w="100%"
             >
-                Update
+                Save
             </Button>
         </Stack>
     );

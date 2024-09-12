@@ -1,5 +1,11 @@
-import { useState } from "react";
-import { ActionIcon, AppShell, Drawer, useMantineTheme } from "@mantine/core";
+import { useEffect, useState } from "react";
+import {
+    ActionIcon,
+    AppShell,
+    ComboboxItem,
+    Drawer,
+    useMantineTheme,
+} from "@mantine/core";
 import { IconAdjustments } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -13,9 +19,15 @@ interface ChatProps {
     context: ClaimContext;
     provider: LLMProvider;
     setContext: React.Dispatch<React.SetStateAction<ClaimContext>>;
+    setModel: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function Chat({ context, provider, setContext }: ChatProps) {
+export default function Chat({
+    context,
+    provider,
+    setContext,
+    setModel,
+}: ChatProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [opened, { open, close }] = useDisclosure(false);
 
@@ -35,11 +47,13 @@ export default function Chat({ context, provider, setContext }: ChatProps) {
                     <Settings
                         close={close}
                         context={context}
+                        provider={provider}
                         setContext={setContext}
+                        setModel={setModel}
                     />
                 </Drawer>
                 <ActionIcon
-                    bg={theme.colors.gray[8]}
+                    bg={theme.colors.gray[7]}
                     onClick={open}
                     variant="filled"
                     size="xl"

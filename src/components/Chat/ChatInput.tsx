@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import {
     ActionIcon,
     Group,
+    Stack,
     Select,
     Textarea,
     Tooltip,
-    useMantineTheme,
 } from "@mantine/core";
 import {
     IconArrowUp,
@@ -37,9 +37,6 @@ export default function ChatModule({
         suggestion && isShowingSuggestion ? suggestion : typedText;
     const isUndoButtonDisabled = !suggestion || !isShowingSuggestion;
     const isRedoButtonDisabled = !suggestion || isShowingSuggestion;
-    const isAssistant = role === Role.assistant;
-
-    const theme = useMantineTheme();
 
     // Reset the input and suggestion when the role changes
     useEffect(() => {
@@ -57,72 +54,63 @@ export default function ChatModule({
     }
 
     return (
-        <>
-            {isAssistant && (
-                <Group gap="xs">
-                    <Tooltip label="Undo suggestion">
-                        <ActionIcon
-                            color="gray"
-                            disabled={isUndoButtonDisabled}
-                            onClick={() => setIsShowingSuggestion(false)}
-                            variant="filled"
-                        >
-                            <IconArrowBackUp />
-                        </ActionIcon>
-                    </Tooltip>
-                    <Tooltip label="Redo suggestion">
-                        <ActionIcon
-                            color="gray"
-                            disabled={isRedoButtonDisabled}
-                            onClick={() => setIsShowingSuggestion(true)}
-                            variant="filled"
-                        >
-                            <IconArrowForwardUp />
-                        </ActionIcon>
-                    </Tooltip>
-                </Group>
-            )}
-            <form onSubmit={handleSubmit}>
-                <Group
-                    bg={theme.white}
-                    grow
-                    preventGrowOverflow={false}
-                    styles={{
-                        root: {
-                            border: `1px solid ${theme.colors.gray[4]}`,
-                            borderRadius: theme.radius.md,
-                        },
-                    }}
-                >
-                    {isAssistant && (
+        <form onSubmit={handleSubmit}>
+            <Group gap="sm">
+                {role === Role.assistant && (
+                    <Stack gap="xs" align="center">
+                        <Group gap="xs">
+                            <Tooltip label="Undo suggestion">
+                                <ActionIcon
+                                    color="gray"
+                                    disabled={isUndoButtonDisabled}
+                                    onClick={() =>
+                                        setIsShowingSuggestion(false)
+                                    }
+                                    variant="filled"
+                                >
+                                    <IconArrowBackUp />
+                                </ActionIcon>
+                            </Tooltip>
+                            <Tooltip label="Redo suggestion">
+                                <ActionIcon
+                                    color="gray"
+                                    disabled={isRedoButtonDisabled}
+                                    onClick={() => setIsShowingSuggestion(true)}
+                                    variant="filled"
+                                >
+                                    <IconArrowForwardUp />
+                                </ActionIcon>
+                            </Tooltip>
+                        </Group>
                         <GetSuggestionButton
                             messages={messages}
                             provider={provider}
-                            suggestion={suggestion}
                             setSuggestion={setSuggestion}
+                            suggestion={suggestion}
                         />
-                    )}
-                    <Textarea
-                        autosize={true}
-                        value={displayText}
-                        minRows={4}
-                        maxRows={4}
-                        onChange={(e) => setTypedText(e.target.value)}
-                        variant="filled"
-                        styles={{ input: { backgroundColor: "transparent" } }}
-                    />
-                    <ActionIcon
-                        type="submit"
-                        disabled={displayText.trim() === ""} // disable if content is empty or only whitespace
-                        radius="xl"
-                        size="lg"
-                        mr="md"
-                        maw={30}
-                    >
-                        <IconArrowUp />
-                    </ActionIcon>
-                </Group>
-            </form>
-        </>
+                    </Stack>
+                )}
+
+                <Textarea
+                    autosize={true}
+                    maxRows={4}
+                    minRows={4}
+                    onChange={(e) => setTypedText(e.target.value)}
+                    rightSection={
+                        <ActionIcon
+                            type="submit"
+                            disabled={displayText.trim() === ""} // disable if content is empty or only whitespace
+                            radius="xl"
+                            size="lg"
+                        >
+                            <IconArrowUp />
+                        </ActionIcon>
+                    }
+                    rightSectionWidth={50}
+                    style={{ flexGrow: 1 }}
+                    value={displayText}
+                />
+            </Group>
+        </form>
     );
 }

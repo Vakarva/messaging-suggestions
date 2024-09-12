@@ -42,15 +42,18 @@ export default function GetSuggestionButton({
     return (
         <>
             <Tooltip
-                label={`Generate ${suggestion ? "new" : ""} suggested response`}
+                label={`Generate ${
+                    suggestion ? "new" : ""
+                } suggested response: ${provider.model}`}
+                multiline
+                w={250}
             >
                 <ActionIcon
                     disabled={isSuggestionDisabled}
                     loading={isLoading}
                     gradient={{ from: "violet", to: "cyan", deg: 135 }}
-                    maw={30}
-                    ml="xs"
                     onClick={getSuggestion}
+                    radius="xl"
                     size="xl"
                     variant="gradient"
                 >
