@@ -1,7 +1,9 @@
 import { useEffect, useRef } from "react";
 import { Box, ScrollArea, Stack } from "@mantine/core";
-import ChatBubble from "@components/Chat/ChatHistory/ChatBubble";
+
 import { Message, Role } from "@custom-types";
+
+import ChatBubble from "@components/Chat/ChatBubble";
 
 interface ChatHistoryProps {
     messages: Message[];

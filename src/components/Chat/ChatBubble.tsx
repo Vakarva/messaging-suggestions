@@ -1,4 +1,5 @@
 import { Badge, Flex, Paper, Text, useMantineTheme } from "@mantine/core";
+
 import { Role, Message } from "@custom-types";
 
 interface ChatBubbleProps {

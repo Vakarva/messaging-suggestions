@@ -4,7 +4,7 @@ import { IconTool, IconUserFilled } from "@tabler/icons-react";
 
 import { Message, Role, LLMProvider } from "@custom-types";
 
-import ChatInputContainer from "@components/Chat/ChatInputContainer";
+import ChatInput from "@components/Chat/ChatInput";
 
 interface ToggleRoleProps {
     addMessage: (content: string, role: Role) => void;
@@ -34,7 +34,7 @@ export default function ToggleRole({
                     </Tabs.Tab>
                 </Tabs.List>
             </Tabs>
-            <ChatInputContainer
+            <ChatInput
                 addMessage={addMessage}
                 messages={messages}
                 provider={provider}

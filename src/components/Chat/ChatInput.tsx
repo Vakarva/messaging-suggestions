@@ -14,7 +14,7 @@ import {
 } from "@tabler/icons-react";
 
 import { LLMProvider, Message, Role } from "@custom-types";
-import GetSuggestionButton from "@components/Chat/Adjuster/GetSuggestion/GetSuggestion";
+import GetSuggestionButton from "@components/Chat/GetSuggestionButton";
 
 interface ChatModuleProps {
     addMessage: (content: string, role: Role) => void;

@@ -12,7 +12,7 @@ import { useDisclosure } from "@mantine/hooks";
 
 import { ClaimContext, Role, Message, LLMProvider } from "@custom-types";
 
-import ChatHistory from "@components/Chat/ChatHistory/ChatHistory";
+import ChatHistory from "@components/Chat/ChatHistory";
 import ToggleRole from "@components/Chat/ToggleRole";
 import Settings from "@components/Chat/Settings";
 

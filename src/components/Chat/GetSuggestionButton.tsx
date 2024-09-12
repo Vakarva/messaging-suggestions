@@ -10,7 +10,7 @@ interface GetSuggestionProps {
     setSuggestion: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function GetSuggestion({
+export default function GetSuggestionButton({
     messages,
     provider,
     suggestion,

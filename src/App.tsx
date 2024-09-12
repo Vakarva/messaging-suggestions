@@ -8,7 +8,7 @@ import {
 } from "@custom-types";
 
 import ApiKeyLogin from "@components/ApiKeyLogin/ApiKeyLogin";
-import ChatApp from "@components/Chat/ChatApp";
+import Chat from "@components/Chat/Chat";
 
 export default function App() {
     const [apiKey, setApiKey] = useState("");
@@ -89,7 +89,7 @@ export default function App() {
                 />
             </Modal>
 
-            <ChatApp
+            <Chat
                 context={context}
                 provider={provider}
                 setContext={setContext}
