@@ -16,7 +16,6 @@
         "@mantine/dates": "^7.12.2",
         "@mantine/hooks": "^7.12.2",
         "@tabler/icons-react": "^3.16.0",
-        "classnames": "^2.5.1",
         "dayjs": "^1.11.13",
         "openai": "^4.57.3",
         "react": "^18.3.1",

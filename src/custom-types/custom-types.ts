@@ -6,7 +6,7 @@ export enum Role {
 
 export interface Message {
     content: string;
-    createdAt: string;
+    createdAt: Date;
     role: Role;
 }
 
@@ -58,6 +58,7 @@ export class ClaimContext {
             "Please respond in a way that is easy to read in a chat interface.",
             "Avoid using markdown such as bold, numbered lists, or headings.",
             "Keep your responses conversational and plain-text only, with short and simple sentences.",
+            "Keep the conversation focused on their insurance claim and any related issues; redirect back to their insurance claim if the conversation strays.",
         ];
 
         // Dynamically populates additional prompts given current ClaimContext fields

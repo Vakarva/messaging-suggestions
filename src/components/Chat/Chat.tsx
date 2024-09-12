@@ -15,7 +15,7 @@ export default function Chat({ provider }: ChatProps) {
     function addMessage(content: string, role: Role) {
         setMessages((oldMessages) => [
             ...oldMessages,
-            { content, createdAt: new Date().toISOString(), role },
+            { content, createdAt: new Date(), role },
         ]);
     }
 

@@ -1,30 +1,36 @@
 import { useEffect, useRef } from "react";
-import classNames from "classnames";
-import "./ChatHistory.css";
-import { Role, Message } from "../../../custom-types/custom-types";
+import { Box, ScrollArea, Stack } from "@mantine/core";
+import ChatBubble from "@components/Chat/ChatHistory/ChatBubble";
+import { Message, Role } from "@custom-types";
 
-export default function ChatHistory(props: { messages: Message[] }) {
+interface ChatHistoryProps {
+    messages: Message[];
+}
+
+export default function ChatHistory({ messages }: ChatHistoryProps) {
     const chatEndRef = useRef<HTMLDivElement | null>(null);
 
-    const messageElements = props.messages.map((message) => (
-        <div
-            key={message.createdAt}
-            className={classNames("message-box", {
-                "message-box--assistant": message.role == Role.assistant,
-            })}
+    const messageElements = messages.map((message) => (
+        <Box
+            key={message.createdAt.toISOString()}
+            maw="85%"
+            ml={message.role == Role.user ? "0" : "auto"}
+            mr={message.role == Role.user ? "auto" : "0"}
         >
-            {message.content}
-        </div>
+            <ChatBubble message={message} />
+        </Box>
     ));
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [props.messages]);
+    }, [messages]);
 
     return (
-        <div className="chat-history">
-            {messageElements}
-            <div ref={chatEndRef} />
-        </div>
+        <ScrollArea offsetScrollbars scrollbarSize={6} type="scroll">
+            <Stack>
+                {messageElements}
+                <div ref={chatEndRef} />
+            </Stack>
+        </ScrollArea>
     );
 }
