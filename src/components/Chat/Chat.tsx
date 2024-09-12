@@ -1,12 +1,5 @@
 import { useState } from "react";
-import {
-    ActionIcon,
-    AppShell,
-    Box,
-    Drawer,
-    Stack,
-    useMantineTheme,
-} from "@mantine/core";
+import { ActionIcon, AppShell, Drawer, useMantineTheme } from "@mantine/core";
 import { IconAdjustments } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -36,7 +29,7 @@ export default function Chat({ context, provider, setContext }: ChatProps) {
     }
 
     return (
-        <AppShell padding="md" header={{ height: 60 }}>
+        <AppShell padding="md" header={{ height: 60 }} footer={{ height: 225 }}>
             <AppShell.Header p="xs">
                 <Drawer opened={opened} onClose={close} title="Settings">
                     <Settings
@@ -55,18 +48,15 @@ export default function Chat({ context, provider, setContext }: ChatProps) {
                 </ActionIcon>
             </AppShell.Header>
             <AppShell.Main bg={theme.colors.gray[0]}>
-                <Stack justify="space-between">
-                    <ChatHistory messages={messages} />
-
-                    <Box>
-                        <ToggleRole
-                            addMessage={addMessage}
-                            messages={messages}
-                            provider={provider}
-                        />
-                    </Box>
-                </Stack>
+                <ChatHistory messages={messages} />
             </AppShell.Main>
+            <AppShell.Footer p="xs">
+                <ToggleRole
+                    addMessage={addMessage}
+                    messages={messages}
+                    provider={provider}
+                />
+            </AppShell.Footer>
         </AppShell>
     );
 }

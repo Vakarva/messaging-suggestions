@@ -103,7 +103,10 @@ export default function ChatModule({
                         />
                     )}
                     <Textarea
+                        autosize={true}
                         value={displayText}
+                        minRows={4}
+                        maxRows={4}
                         onChange={(e) => setTypedText(e.target.value)}
                         variant="filled"
                         styles={{ input: { backgroundColor: "transparent" } }}
@@ -120,16 +123,6 @@ export default function ChatModule({
                     </ActionIcon>
                 </Group>
             </form>
-            {isAssistant && (
-                <Select
-                    allowDeselect={false}
-                    label="Choose Model"
-                    data={provider.models}
-                    defaultValue={provider.model}
-                    size="xs"
-                    w={130}
-                />
-            )}
         </>
     );
 }
