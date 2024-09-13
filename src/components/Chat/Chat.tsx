@@ -1,11 +1,5 @@
-import { useEffect, useState } from "react";
-import {
-    ActionIcon,
-    AppShell,
-    ComboboxItem,
-    Drawer,
-    useMantineTheme,
-} from "@mantine/core";
+import { useState } from "react";
+import { ActionIcon, AppShell, Drawer, useMantineTheme } from "@mantine/core";
 import { IconAdjustments } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -41,9 +35,9 @@ export default function Chat({
     }
 
     return (
-        <AppShell padding="md" header={{ height: 60 }} footer={{ height: 225 }}>
+        <AppShell header={{ height: 60 }} footer={{ height: 205 }} padding="lg">
             <AppShell.Header p="xs">
-                <Drawer opened={opened} onClose={close} title="Settings">
+                <Drawer onClose={close} opened={opened} title="Settings">
                     <Settings
                         close={close}
                         context={context}
@@ -55,8 +49,8 @@ export default function Chat({
                 <ActionIcon
                     bg={theme.colors.gray[7]}
                     onClick={open}
-                    variant="filled"
                     size="xl"
+                    variant="filled"
                 >
                     <IconAdjustments />
                 </ActionIcon>
@@ -64,7 +58,7 @@ export default function Chat({
             <AppShell.Main bg={theme.colors.gray[0]}>
                 <ChatHistory messages={messages} />
             </AppShell.Main>
-            <AppShell.Footer p="xs">
+            <AppShell.Footer p="md">
                 <ToggleRole
                     addMessage={addMessage}
                     messages={messages}

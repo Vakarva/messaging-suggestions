@@ -7,7 +7,7 @@ import {
     LLMProviderName,
 } from "@custom-types";
 
-import ApiKeyLogin from "@components/ApiKeyLogin/ApiKeyLogin";
+import ApiKeyLogin from "@components/Login/ApiKeyLogin";
 import Chat from "@components/Chat/Chat";
 
 export default function App() {

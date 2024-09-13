@@ -1,55 +1,50 @@
 import { useEffect, useState } from "react";
+import { ActionIcon, Group, Stack, Textarea, Tooltip } from "@mantine/core";
+import { getHotkeyHandler } from "@mantine/hooks";
 import {
-    ActionIcon,
-    Group,
-    Stack,
-    Select,
-    Textarea,
-    Tooltip,
-} from "@mantine/core";
-import {
-    IconArrowUp,
     IconArrowBackUp,
     IconArrowForwardUp,
+    IconArrowUp,
 } from "@tabler/icons-react";
 
 import { LLMProvider, Message, Role } from "@custom-types";
+
 import GetSuggestionButton from "@components/Chat/GetSuggestionButton";
 
-interface ChatModuleProps {
+interface ChatInputProps {
     addMessage: (content: string, role: Role) => void;
     messages: Message[];
     provider: LLMProvider;
     role: Role;
 }
 
-export default function ChatModule({
+export default function ChatInput({
     addMessage,
     messages,
     provider,
     role,
-}: ChatModuleProps) {
-    const [typedText, setTypedText] = useState("");
+}: ChatInputProps) {
     const [isShowingSuggestion, setIsShowingSuggestion] = useState(true);
     const [suggestion, setSuggestion] = useState("");
+    const [typedText, setTypedText] = useState("");
 
     const displayText =
         suggestion && isShowingSuggestion ? suggestion : typedText;
-    const isUndoButtonDisabled = !suggestion || !isShowingSuggestion;
     const isRedoButtonDisabled = !suggestion || isShowingSuggestion;
+    const isUndoButtonDisabled = !suggestion || !isShowingSuggestion;
 
     // Reset the input and suggestion when the role changes
     useEffect(() => {
-        setTypedText("");
         setSuggestion("");
+        setTypedText("");
     }, [role]);
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
         addMessage(displayText.trim(), role); // trim text of unnecessary whitespace before adding to conversation
-        setTypedText("");
         setSuggestion("");
+        setTypedText("");
         setIsShowingSuggestion(true);
     }
 
@@ -92,10 +87,12 @@ export default function ChatModule({
                 )}
 
                 <Textarea
+                    aria-label="Message input"
                     autosize={true}
                     maxRows={4}
                     minRows={4}
                     onChange={(e) => setTypedText(e.target.value)}
+                    onKeyDown={getHotkeyHandler([["mod+Enter", handleSubmit]])}
                     rightSection={
                         <ActionIcon
                             type="submit"

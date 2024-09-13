@@ -183,8 +183,14 @@ export class OpenAIClient extends LLMProvider {
     }
 
     async checkApiKey(): Promise<boolean> {
-        const response = await this.instance.models.list();
-        return response.data.length > 0;
+        // Question: In combination with the try/catch/finally block in App.tsx, is this overkill?
+        try {
+            const response = await this.instance.models.list();
+            return response.data.length > 0;
+        } catch (error) {
+            console.error("Error validating OpenAI API key:", error);
+            return false;
+        }
     }
 
     async getSuggestion(

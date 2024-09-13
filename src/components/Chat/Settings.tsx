@@ -88,13 +88,12 @@ export default function Settings({
                 <Select
                     allowDeselect={false}
                     data={provider.availableModels}
+                    label="Model"
                     onChange={(value) => setTempModel(value!)}
                     value={tempModel}
-                    label="Model"
                 />
             </Fieldset>
             <Button
-                ml="auto"
                 onClick={() => {
                     setContext(tempContext);
                     setModel(tempModel);

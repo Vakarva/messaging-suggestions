@@ -1,20 +1,21 @@
 import { ActionIcon, Tooltip } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconBrain } from "@tabler/icons-react";
+
 import { LLMProvider, Message, Role } from "@custom-types";
 
 interface GetSuggestionProps {
     messages: Message[];
     provider: LLMProvider;
-    suggestion: string;
     setSuggestion: React.Dispatch<React.SetStateAction<string>>;
+    suggestion: string;
 }
 
 export default function GetSuggestionButton({
     messages,
     provider,
-    suggestion,
     setSuggestion,
+    suggestion,
 }: GetSuggestionProps) {
     const [isLoading, { open, close }] = useDisclosure(false);
 
@@ -46,12 +47,11 @@ export default function GetSuggestionButton({
                     suggestion ? "new" : ""
                 } suggested response: ${provider.model}`}
                 multiline
-                w={250}
             >
                 <ActionIcon
                     disabled={isSuggestionDisabled}
-                    loading={isLoading}
                     gradient={{ from: "violet", to: "cyan", deg: 135 }}
+                    loading={isLoading}
                     onClick={getSuggestion}
                     radius="xl"
                     size="xl"
