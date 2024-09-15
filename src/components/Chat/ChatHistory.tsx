@@ -29,7 +29,7 @@ export default function ChatHistory({ messages }: ChatHistoryProps) {
     }, [messages]);
 
     return (
-        <ScrollArea offsetScrollbars scrollbarSize={6} type="scroll" maw="100%">
+        <ScrollArea offsetScrollbars scrollbarSize={6} type="scroll">
             <Stack>
                 {messageElements}
                 <div ref={targetRef} />

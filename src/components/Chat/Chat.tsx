@@ -21,6 +21,7 @@ export default function Chat({ llmApiClient, logout }: ChatProps) {
 
     return (
         <AppShell
+            layout="alt"
             navbar={{
                 width: 80,
                 breakpoint: "sm",
