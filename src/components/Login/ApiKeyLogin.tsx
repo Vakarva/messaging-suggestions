@@ -1,61 +1,55 @@
 import { Button, Select, PasswordInput, Space } from "@mantine/core";
-import { LLMProviderName } from "@custom-types";
+
+import { LlmProviderName } from "@custom-types";
 
 interface ApiKeyLoginProps {
     apiKey: string;
-    isValidKey: boolean | undefined;
-    isSubmitting: boolean;
-    providerName: LLMProviderName;
-    setApiKey: (newApiKey: string) => void;
-    setIsValidKey: (isValid?: boolean) => void;
-    setIsSubmitting: (isSubmitting: boolean) => void;
-    setProviderName: (providerName: LLMProviderName) => void;
+    apiProviderName: LlmProviderName;
+    editApiKey: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    editApiProviderName: (value: string | null) => void;
+    isLoading: boolean;
+    isValidApiKey: boolean | undefined;
+    submitApiKey: () => void;
 }
 
 export default function ApiKeyLogin({
     apiKey,
-    isValidKey,
-    isSubmitting,
-    providerName,
-    setApiKey,
-    setIsSubmitting,
-    setIsValidKey,
-    setProviderName,
+    apiProviderName,
+    editApiKey,
+    editApiProviderName,
+    isLoading,
+    isValidApiKey,
+    submitApiKey,
 }: ApiKeyLoginProps) {
-    const submitApiKey = async () => {
-        setIsSubmitting(true);
-    };
+    const errorMessage =
+        isValidApiKey === false
+            ? "Incorrect API Key: Please try again"
+            : undefined;
 
     return (
         <>
             <Select
                 allowDeselect={false}
-                data={Object.values(LLMProviderName)}
-                defaultValue={providerName}
+                data={Object.values(LlmProviderName)}
+                defaultValue={apiProviderName}
+                disabled={isLoading}
                 label="Provider"
-                onChange={(value) => setProviderName(value as LLMProviderName)}
+                onChange={editApiProviderName}
             />
             <PasswordInput
                 data-autofocus
-                disabled={isSubmitting}
-                error={
-                    isValidKey === false
-                        ? "Incorrect API Key: Please try again"
-                        : undefined
-                }
+                disabled={isLoading}
+                error={errorMessage}
                 label="API Key"
                 name="apiKey"
-                onChange={(e) => {
-                    setApiKey(e.target.value);
-                    setIsValidKey(undefined);
-                }}
+                onChange={editApiKey}
                 value={apiKey}
             />
             <Space h="md" />
             <Button
                 disabled={apiKey.trim().length === 0}
                 fullWidth
-                loading={isSubmitting}
+                loading={isLoading}
                 onClick={submitApiKey}
             >
                 Submit

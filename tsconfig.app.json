@@ -9,8 +9,10 @@
         /* Import paths */
         "baseUrl": "./src",
         "paths": {
+            "@components/*": ["components/*"],
             "@custom-types": ["custom-types/custom-types.ts"],
-            "@components/*": ["components/*"]
+            "@hooks/*": ["hooks/*"],
+            "@styles/*": ["styles/*"]
         },
 
         /* Bundler mode */

@@ -1,23 +1,20 @@
 import { useState } from "react";
-import { Stack, Tabs, ThemeIcon } from "@mantine/core";
+import { Stack, Tabs, ThemeIcon, useMantineTheme } from "@mantine/core";
 import { IconHeartbeat, IconUserFilled } from "@tabler/icons-react";
 
-import { Message, Role, LLMProvider } from "@custom-types";
+import { Role } from "@custom-types";
 
-import ChatInput from "@components/Chat/ChatInput";
+import ChatForm from "@components/Chat/ChatForm";
+import { ModelHook } from "@hooks/useModel";
 
-interface ToggleRoleProps {
-    addMessage: (content: string, role: Role) => void;
-    messages: Message[];
-    provider: LLMProvider;
+interface RoleTabsProps {
+    model: ModelHook;
 }
 
-export default function ToggleRole({
-    addMessage,
-    messages,
-    provider,
-}: ToggleRoleProps) {
+export default function RoleTabs({ model }: RoleTabsProps) {
     const [activeTab, setActiveTab] = useState<string | null>(Role.user);
+
+    const theme = useMantineTheme();
 
     return (
         <Stack gap="xs">
@@ -28,8 +25,8 @@ export default function ToggleRole({
                             <ThemeIcon
                                 color="teal"
                                 gradient={{
-                                    from: "gray",
-                                    to: "blue",
+                                    from: theme.colors.gray[3],
+                                    to: theme.colors.gray[5],
                                     deg: 135,
                                 }}
                                 variant="gradient"
@@ -46,8 +43,8 @@ export default function ToggleRole({
                             <ThemeIcon
                                 color="red"
                                 gradient={{
-                                    from: "red",
-                                    to: "yellow",
+                                    from: theme.colors.red[3],
+                                    to: theme.colors.red[5],
                                     deg: 135,
                                 }}
                                 variant="gradient"
@@ -61,10 +58,8 @@ export default function ToggleRole({
                     </Tabs.Tab>
                 </Tabs.List>
             </Tabs>
-            <ChatInput
-                addMessage={addMessage}
-                messages={messages}
-                provider={provider}
+            <ChatForm
+                model={model}
                 role={activeTab === Role.user ? Role.user : Role.assistant}
             />
         </Stack>

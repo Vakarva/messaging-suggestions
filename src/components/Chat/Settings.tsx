@@ -8,33 +8,19 @@ import {
     TextInput,
 } from "@mantine/core";
 
-import { ClaimContext, LLMProvider } from "@custom-types";
+import { useClaimContext } from "@hooks/useClaimContext";
+import { ModelHook } from "@hooks/useModel";
 
 interface SettingsProps {
     close: () => void;
-    context: ClaimContext;
-    provider: LLMProvider;
-    setContext: React.Dispatch<React.SetStateAction<ClaimContext>>;
-    setModel: React.Dispatch<React.SetStateAction<string>>;
+    model: ModelHook;
 }
 
-export default function Settings({
-    close,
-    context,
-    provider,
-    setContext,
-    setModel,
-}: SettingsProps) {
-    const [tempContext, setTempContext] = useState<ClaimContext>(context);
-    const [tempModel, setTempModel] = useState<string>(provider.model);
-
-    function updateTempContext(e: React.ChangeEvent<HTMLInputElement>) {
-        const { name, value } = e.target;
-
-        setTempContext((prevContext) =>
-            Object.assign(new ClaimContext(), prevContext, { [name]: value })
-        );
-    }
+export default function Settings({ close, model }: SettingsProps) {
+    const draftClaimContext = useClaimContext(model.claimContext);
+    const [draftModelName, setDraftModelName] = useState<string>(
+        model.llmModelName
+    );
 
     return (
         <Stack>
@@ -43,60 +29,58 @@ export default function Settings({
                     <TextInput
                         label="Claim ID"
                         name="claimId"
-                        onChange={updateTempContext}
+                        onChange={draftClaimContext.handleTextInputChange}
                         placeholder="Claim ID"
                         type="text"
-                        value={tempContext.claimId}
+                        value={draftClaimContext.claimId}
                     />
                     <TextInput
                         label="Next appointment"
                         name="nextAppointment"
-                        onChange={updateTempContext}
+                        onChange={draftClaimContext.handleTextInputChange}
                         type="date"
-                        value={tempContext.nextAppointment}
+                        value={draftClaimContext.nextAppointment}
                     />
                     <NumberInput
                         decimalScale={2}
                         clampBehavior="strict"
                         hideControls
                         label="Next payment amount"
-                        onChange={(value) => {
-                            setTempContext((prevContext) =>
-                                Object.assign(new ClaimContext(), prevContext, {
-                                    nextPaymentAmount: value.toString(),
-                                })
-                            );
-                        }}
+                        onValueChange={
+                            draftClaimContext.handleNumberInputChange
+                        }
                         min={0}
                         name="nextPaymentAmount"
                         placeholder="$0.00"
                         prefix="$"
                         thousandSeparator=","
                         type="text"
-                        value={tempContext.nextPaymentAmount}
+                        value={draftClaimContext.nextPaymentAmount}
                     />
                     <TextInput
                         label="Next payment date"
                         name="nextPaymentDate"
-                        onChange={updateTempContext}
+                        onChange={draftClaimContext.handleTextInputChange}
                         type="date"
-                        value={tempContext.nextPaymentDate}
+                        value={draftClaimContext.nextPaymentDate}
                     />
                 </Stack>
             </Fieldset>
             <Fieldset legend="LLM Behavior">
                 <Select
                     allowDeselect={false}
-                    data={provider.availableModels}
+                    data={model.llmApiClient.availableModels}
                     label="Model"
-                    onChange={(value) => setTempModel(value!)}
-                    value={tempModel}
+                    onChange={(value) => setDraftModelName(value!)}
+                    value={draftModelName}
                 />
             </Fieldset>
             <Button
                 onClick={() => {
-                    setContext(tempContext);
-                    setModel(tempModel);
+                    model.setModel({
+                        newClaimContext: draftClaimContext,
+                        newLlmModelName: draftModelName,
+                    });
                     close();
                 }}
                 w="100%"
