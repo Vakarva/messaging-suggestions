@@ -45,6 +45,11 @@ export abstract class LlmApiClient<TClient extends LlmApiClientType> {
     ): Promise<void>;
 }
 
+interface AnthropicMessage {
+    role: "user" | "assistant";
+    content: string;
+}
+
 class AnthropicApiClient extends LlmApiClient<Anthropic> {
     constructor(apiKey: string) {
         const anthropicInstance = new Anthropic({
@@ -76,22 +81,29 @@ class AnthropicApiClient extends LlmApiClient<Anthropic> {
         }
     }
 
-    async getStream(
-        _prompt: string,
-        _messages: Message[],
-        _model: string
-    ): Promise<any> {
-        // TODO: Implement
-        throw new Error("Anthropic getStream not implemented");
+    protected formatMessages(messages: Message[]): AnthropicMessage[] {
+        return [...messages.map(({ role, content }) => ({ role, content }))];
+    }
+    async getStream(prompt: string, messages: Message[], model: string) {
+        const formattedMessages = this.formatMessages(messages);
+
+        const stream = await this.instance.messages.stream({
+            system: prompt,
+            messages: formattedMessages,
+            model: model,
+            max_tokens: 512,
+            stream: true,
+        });
+        return stream;
     }
 
     async writeStream(
-        _stream: any,
-        _initializeOutput: () => void,
-        _appendToOutput: (text: string) => void
-    ): Promise<void> {
-        // TODO: Implement
-        throw new Error("Anthropic writeStream not implemented");
+        stream: any,
+        initializeOutput: () => void,
+        appendToOutput: (text: string) => void
+    ) {
+        initializeOutput();
+        stream.on("text", appendToOutput);
     }
 }
 
