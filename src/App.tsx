@@ -8,7 +8,7 @@ export default function App() {
     const apiKeyLogin = useApiKeyLogin();
 
     return (
-        <main>
+        <>
             <Modal
                 centered
                 closeOnClickOutside={false}
@@ -36,6 +36,6 @@ export default function App() {
                 llmApiClient={apiKeyLogin.llmApiClient}
                 logout={apiKeyLogin.logout}
             />
-        </main>
+        </>
     );
 }
