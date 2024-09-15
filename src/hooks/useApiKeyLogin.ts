@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 
 import {
     createLlmApiClient,
@@ -29,26 +29,25 @@ export default function useApiKeyLogin(): UseApiKeyLoginHook {
     );
     const [isLoading, setIsLoading] = useState(false);
 
-    const llmApiClient = useMemo(() => {
-        return createLlmApiClient(apiProviderName, apiKey);
-    }, [isLoading]);
+    const llmApiClientRef = useRef<LlmApiClient<LlmApiClientType>>(
+        createLlmApiClient(apiProviderName, apiKey)
+    );
 
     useEffect(() => {
         if (!isLoading) return;
 
-        const validateApiKey = async () => {
+        (async () => {
             try {
-                setIsLoading(true); // loading
-                setIsValidApiKey(await llmApiClient.checkApiKey());
-            } catch (error) {
-                console.error(error);
-                setIsValidApiKey(false);
+                setIsLoading(true);
+                llmApiClientRef.current = createLlmApiClient(
+                    apiProviderName,
+                    apiKey
+                );
+                setIsValidApiKey(await llmApiClientRef.current.isApiKeyValid());
             } finally {
                 setIsLoading(false);
             }
-        };
-
-        validateApiKey();
+        })();
     }, [isLoading]);
 
     const editApiKey = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,7 +74,7 @@ export default function useApiKeyLogin(): UseApiKeyLoginHook {
         apiProviderName,
         editApiKey,
         editApiProviderName,
-        llmApiClient,
+        llmApiClient: llmApiClientRef.current,
         logout,
         isLoading,
         isValidApiKey,

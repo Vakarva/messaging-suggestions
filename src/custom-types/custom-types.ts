@@ -32,7 +32,7 @@ export abstract class LlmApiClient<TClient extends LlmApiClientType> {
     abstract get defaultModelName(): string;
     abstract get availableModels(): string[];
 
-    abstract checkApiKey(): Promise<boolean>;
+    abstract isApiKeyValid(): Promise<boolean>;
     abstract getStream(
         prompt: string,
         messages: Message[],
@@ -62,7 +62,7 @@ class AnthropicApiClient extends LlmApiClient<Anthropic> {
         return this.availableModels[0];
     }
 
-    async checkApiKey(): Promise<boolean> {
+    async isApiKeyValid(): Promise<boolean> {
         try {
             await this.instance.messages.create({
                 model: this.defaultModelName,
@@ -117,7 +117,7 @@ class OpenAiApiClient extends LlmApiClient<OpenAI> {
         return this.availableModels[0];
     }
 
-    async checkApiKey(): Promise<boolean> {
+    async isApiKeyValid(): Promise<boolean> {
         try {
             await this.instance.models.list();
             return true;

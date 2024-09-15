@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { LlmApiClient, LlmApiClientType, Message, Role } from "@custom-types";
 import {
@@ -38,6 +38,10 @@ export function useModel(
         llmApiClient.defaultModelName
     );
     const [messages, setMessages] = useState<Message[]>([]);
+
+    useEffect(() => {
+        setLlmModelName(llmApiClient.defaultModelName);
+    }, [llmApiClient]);
 
     const appendMessage = (content: string, role: Role) => {
         setMessages((oldMessages) => [

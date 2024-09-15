@@ -7,9 +7,9 @@ import "@mantine/core/styles.css";
 import App from "./App.tsx";
 
 createRoot(document.getElementById("root")!).render(
-    <StrictMode>
-        <MantineProvider>
-            <App />
-        </MantineProvider>
-    </StrictMode>
+    // <StrictMode>
+    <MantineProvider>
+        <App />
+    </MantineProvider>
+    // </StrictMode>
 );
