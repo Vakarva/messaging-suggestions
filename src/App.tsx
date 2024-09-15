@@ -2,12 +2,10 @@ import { Modal } from "@mantine/core";
 
 import ApiKeyLogin from "@components/Login/ApiKeyLogin";
 import Chat from "@components/Chat/Chat";
-import useApiKeyLogin from "@hooks/useApiKeyLogin";
+import useApiKeyLogin, { ApiKeyLoginStatus } from "@hooks/useApiKeyLogin";
 
 export default function App() {
     const apiKeyLogin = useApiKeyLogin();
-
-    const isNotLoggedIn = apiKeyLogin.isValidApiKey !== true;
 
     return (
         <main>
@@ -16,7 +14,7 @@ export default function App() {
                 closeOnClickOutside={false}
                 closeOnEscape={false}
                 onClose={() => {}}
-                opened={isNotLoggedIn}
+                opened={apiKeyLogin.status !== ApiKeyLoginStatus.SUCCESS}
                 overlayProps={{
                     blur: 3,
                 }}

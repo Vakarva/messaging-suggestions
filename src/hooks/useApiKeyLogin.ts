@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import {
     createLlmApiClient,
@@ -7,66 +7,70 @@ import {
     LlmProviderName,
 } from "@custom-types";
 
-export interface UseApiKeyLoginHook {
+export enum ApiKeyLoginStatus {
+    IDLE,
+    LOADING,
+    SUCCESS,
+    ERROR,
+}
+
+export interface ApiKeyLoginHook {
     apiKey: string;
     apiProviderName: LlmProviderName;
     editApiKey: (e: React.ChangeEvent<HTMLInputElement>) => void;
     editApiProviderName: (value: string | null) => void;
-    isLoading: boolean;
-    isValidApiKey: boolean | undefined;
     llmApiClient: LlmApiClient<LlmApiClientType>;
     logout: () => void;
+    status: ApiKeyLoginStatus;
     submitApiKey: () => void;
 }
 
-export default function useApiKeyLogin(): UseApiKeyLoginHook {
+export default function useApiKeyLogin(): ApiKeyLoginHook {
     const [apiProviderName, setApiProviderName] = useState<LlmProviderName>(
         LlmProviderName.openAi
     );
     const [apiKey, setApiKey] = useState("");
-    const [isValidApiKey, setIsValidApiKey] = useState<boolean | undefined>(
-        undefined
-    );
-    const [isLoading, setIsLoading] = useState(false);
+    const [status, setStatus] = useState(ApiKeyLoginStatus.IDLE);
 
     const llmApiClientRef = useRef<LlmApiClient<LlmApiClientType>>(
         createLlmApiClient(apiProviderName, apiKey)
     );
 
     useEffect(() => {
-        if (!isLoading) return;
+        if (status !== ApiKeyLoginStatus.LOADING) return;
 
-        (async () => {
-            try {
-                setIsLoading(true);
-                llmApiClientRef.current = createLlmApiClient(
-                    apiProviderName,
-                    apiKey
-                );
-                setIsValidApiKey(await llmApiClientRef.current.isApiKeyValid());
-            } finally {
-                setIsLoading(false);
-            }
-        })();
-    }, [isLoading]);
+        const validateApiKey = async () => {
+            llmApiClientRef.current = createLlmApiClient(
+                apiProviderName,
+                apiKey
+            );
+
+            const isValid = await llmApiClientRef.current.isApiKeyValid();
+            setStatus(
+                isValid ? ApiKeyLoginStatus.SUCCESS : ApiKeyLoginStatus.ERROR
+            );
+        };
+
+        validateApiKey();
+    }, [status]);
 
     const editApiKey = (e: React.ChangeEvent<HTMLInputElement>) => {
         setApiKey(e.target.value);
-        setIsValidApiKey(undefined);
+        setStatus(ApiKeyLoginStatus.IDLE);
     };
 
     const editApiProviderName = (value: string | null) => {
         setApiProviderName(value as LlmProviderName);
-        setIsValidApiKey(undefined);
+        setStatus(ApiKeyLoginStatus.IDLE);
     };
 
     const logout = () => {
         setApiKey("");
-        setIsValidApiKey(undefined);
+        setStatus(ApiKeyLoginStatus.IDLE);
     };
 
     const submitApiKey = () => {
-        setIsLoading(true);
+        setStatus(ApiKeyLoginStatus.LOADING);
     };
 
     return {
@@ -76,8 +80,7 @@ export default function useApiKeyLogin(): UseApiKeyLoginHook {
         editApiProviderName,
         llmApiClient: llmApiClientRef.current,
         logout,
-        isLoading,
-        isValidApiKey,
+        status,
         submitApiKey,
     };
 }

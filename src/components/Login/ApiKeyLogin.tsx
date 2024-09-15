@@ -1,30 +1,17 @@
 import { Button, Select, PasswordInput, Space } from "@mantine/core";
 
 import { LlmProviderName } from "@custom-types";
-
-interface ApiKeyLoginProps {
-    apiKey: string;
-    apiProviderName: LlmProviderName;
-    editApiKey: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    editApiProviderName: (value: string | null) => void;
-    isLoading: boolean;
-    isValidApiKey: boolean | undefined;
-    submitApiKey: () => void;
-}
+import { ApiKeyLoginHook, ApiKeyLoginStatus } from "@hooks/useApiKeyLogin";
 
 export default function ApiKeyLogin({
     apiKey,
     apiProviderName,
     editApiKey,
     editApiProviderName,
-    isLoading,
-    isValidApiKey,
+    status,
     submitApiKey,
-}: ApiKeyLoginProps) {
-    const errorMessage =
-        isValidApiKey === false
-            ? "Incorrect API Key: Please try again"
-            : undefined;
+}: ApiKeyLoginHook) {
+    const isLoading = status === ApiKeyLoginStatus.LOADING;
 
     return (
         <>
@@ -39,7 +26,11 @@ export default function ApiKeyLogin({
             <PasswordInput
                 data-autofocus
                 disabled={isLoading}
-                error={errorMessage}
+                error={
+                    status === ApiKeyLoginStatus.ERROR
+                        ? "Incorrect API Key: Please try again"
+                        : undefined
+                }
                 label="API Key"
                 name="apiKey"
                 onChange={editApiKey}
