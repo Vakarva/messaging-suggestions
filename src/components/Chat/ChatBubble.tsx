@@ -32,7 +32,10 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
                 }}
                 w="100%"
             >
-                <Text size="lg" style={{ wordBreak: "break-all" }}>
+                <Text
+                    size="lg"
+                    style={{ hyphens: "auto", wordBreak: "break-word" }}
+                >
                     {message.content}
                 </Text>
             </Paper>
