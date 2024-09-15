@@ -99,20 +99,18 @@ export const useClaimContext = (
 
         // Dynamically populate additional prompts given current ClaimContext fields
         // Example: `additionalContext` will look like: "The worker's: Claim Id is 9D2jdR; Next Appointment is 10/24/2024."
-        let contextArray: string[] = [];
-        Object.entries({
+        const contextArray = Object.entries({
             claimId,
             nextAppointment,
             nextPaymentAmount,
             nextPaymentDate,
-        }).forEach(([key, value]: [any, string]) => {
-            if (value) {
+        })
+            .filter(([, value]) => value)
+            .map(([key, value]) => {
                 const label =
                     ClaimContextLabels[key as keyof typeof ClaimContextLabels];
-                const stringifiedField = `${label} is ${value}`; // example string: "Claim Id is 9D2jdR"
-                contextArray.push(stringifiedField);
-            }
-        });
+                return `${label} is ${value}`;
+            });
         // If contextArray is not empty, add to prompts
         if (contextArray.length > 0) {
             const context = `The worker's: ${contextArray.join("; ")}.`;

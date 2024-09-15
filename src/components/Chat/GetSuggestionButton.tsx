@@ -1,7 +1,6 @@
 import { ActionIcon, Tooltip } from "@mantine/core";
 import { IconBrain } from "@tabler/icons-react";
 
-import { Role } from "@custom-types";
 import { ModelHook } from "@hooks/useModel";
 
 interface GetSuggestionProps {
