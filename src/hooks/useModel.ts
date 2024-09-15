@@ -10,10 +10,12 @@ import {
 export interface ModelHook {
     appendMessage: (content: string, role: Role) => void;
     claimContext: ClaimContextHook;
-
+    isLoadingStream: boolean;
+    isSuggestionDisabled: () => boolean;
     llmApiClient: LlmApiClient<LlmApiClientType>;
-    messages: Message[];
     llmModelName: string;
+    messages: Message[];
+    setIsLoadingStream: React.Dispatch<React.SetStateAction<boolean>>;
     setModel: ({
         newClaimContext,
         newLlmModelName,
@@ -37,6 +39,7 @@ export function useModel(
     const [llmModelName, setLlmModelName] = useState<string>(
         llmApiClient.defaultModelName
     );
+    const [isLoadingStream, setIsLoadingStream] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
 
     useEffect(() => {
@@ -50,19 +53,21 @@ export function useModel(
         ]);
     };
 
+    const isSuggestionDisabled = () => {
+        const mostRecentRole = messages.at(-1)?.role;
+        return mostRecentRole !== Role.user;
+    };
+
     const streamResponse = async (
         initializeOutput: () => void,
         appendToOutput: (text: string) => void
     ): Promise<void> => {
         const prompt = claimContext.buildSystemMessage();
         try {
-            const stream = await llmApiClient.getStream(
+            await llmApiClient.writeStream(
                 prompt,
                 messages,
-                llmModelName
-            );
-            await llmApiClient.writeStream(
-                stream,
+                llmModelName,
                 initializeOutput,
                 appendToOutput
             );
@@ -94,9 +99,12 @@ export function useModel(
     return {
         appendMessage,
         claimContext,
+        isLoadingStream,
+        isSuggestionDisabled,
         llmApiClient,
         llmModelName,
         messages,
+        setIsLoadingStream,
         setLlmModelName,
         setModel,
         streamResponse,

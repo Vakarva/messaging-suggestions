@@ -43,7 +43,10 @@ export default function ChatForm({ model, role }: ChatFormProps) {
                     onKeyDown={getHotkeyHandler([["mod+Enter", handleSubmit]])}
                     rightSection={
                         <ActionIcon
-                            disabled={chatFormInput.text.trim() === ""} // disable if content is empty or only whitespace
+                            disabled={
+                                model.isLoadingStream ||
+                                chatFormInput.text.trim() === ""
+                            }
                             radius="xl"
                             size="lg"
                             type="submit"

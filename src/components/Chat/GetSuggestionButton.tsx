@@ -1,5 +1,4 @@
 import { ActionIcon, Tooltip } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { IconBrain } from "@tabler/icons-react";
 
 import { Role } from "@custom-types";
@@ -16,23 +15,18 @@ export default function GetSuggestionButton({
     appendToSuggestion,
     initializeSuggestion,
 }: GetSuggestionProps) {
-    const [isLoading, { open, close }] = useDisclosure(false);
-
-    // Disable suggestion button if most recent message did not come from "user" (aka worker)
-    const mostRecentRole = model.messages.length
-        ? model.messages[model.messages.length - 1].role
-        : null;
-    const isSuggestionDisabled = mostRecentRole !== Role.user;
-
     async function streamSuggestion(): Promise<void> {
-        open();
+        model.setIsLoadingStream(true);
 
         try {
-            model.streamResponse(initializeSuggestion, appendToSuggestion);
+            await model.streamResponse(
+                initializeSuggestion,
+                appendToSuggestion
+            );
         } catch (error) {
             console.error("Error fetching suggestion:", error);
         } finally {
-            close();
+            model.setIsLoadingStream(false);
         }
     }
 
@@ -44,8 +38,8 @@ export default function GetSuggestionButton({
             >
                 <ActionIcon
                     color="violet"
-                    disabled={isSuggestionDisabled}
-                    loading={isLoading}
+                    disabled={model.isSuggestionDisabled()}
+                    loading={model.isLoadingStream}
                     onClick={streamSuggestion}
                     radius="xl"
                     size="xl"

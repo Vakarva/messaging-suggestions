@@ -13,11 +13,10 @@ export interface Message {
 // LLM API Client classes
 import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
-import { Stream } from "openai/streaming";
 
 export enum LlmProviderName {
-    openAi = "OpenAI",
     anthropic = "Anthropic",
+    openAi = "OpenAI",
 }
 
 export type LlmApiClientType = Anthropic | OpenAI;
@@ -33,13 +32,10 @@ export abstract class LlmApiClient<TClient extends LlmApiClientType> {
     abstract get availableModels(): string[];
 
     abstract isApiKeyValid(): Promise<boolean>;
-    abstract getStream(
+    abstract writeStream(
         prompt: string,
         messages: Message[],
-        model: string
-    ): Promise<any>;
-    abstract writeStream(
-        stream: any,
+        model: string,
         initializeOutput: () => void,
         appendToOutput: (text: string) => void
     ): Promise<void>;
@@ -81,29 +77,43 @@ class AnthropicApiClient extends LlmApiClient<Anthropic> {
         }
     }
 
-    protected formatMessages(messages: Message[]): AnthropicMessage[] {
-        return [...messages.map(({ role, content }) => ({ role, content }))];
-    }
-    async getStream(prompt: string, messages: Message[], model: string) {
-        const formattedMessages = this.formatMessages(messages);
+    // Anthropic requires messages to alternate between user and assistant
+    protected mergedMessages(messages: Message[]): AnthropicMessage[] {
+        return messages.reduce<AnthropicMessage[]>((acc, message, index) => {
+            if (index === 0) {
+                acc.push({ role: message.role, content: message.content });
+            } else {
+                const prevMessage = acc[acc.length - 1];
 
-        const stream = await this.instance.messages.stream({
-            system: prompt,
-            messages: formattedMessages,
-            model: model,
-            max_tokens: 512,
-            stream: true,
-        });
-        return stream;
+                if (prevMessage.role === message.role) {
+                    prevMessage.content += `\n${message.content}`;
+                } else {
+                    acc.push({ role: message.role, content: message.content });
+                }
+            }
+            return acc;
+        }, []);
     }
 
     async writeStream(
-        stream: any,
+        prompt: string,
+        messages: Message[],
+        model: string,
         initializeOutput: () => void,
         appendToOutput: (text: string) => void
-    ) {
+    ): Promise<void> {
         initializeOutput();
-        stream.on("text", appendToOutput);
+        const formattedMessages = this.mergedMessages(messages);
+
+        await this.instance.messages
+            .stream({
+                system: prompt,
+                messages: formattedMessages,
+                model: model,
+                max_tokens: 512,
+                stream: true,
+            })
+            .on("text", appendToOutput);
     }
 }
 
@@ -139,7 +149,7 @@ class OpenAiApiClient extends LlmApiClient<OpenAI> {
         }
     }
 
-    protected formatMessages(
+    protected formattedMessages(
         prompt: string,
         messages: Message[]
     ): OpenAiMessage[] {
@@ -154,27 +164,21 @@ class OpenAiApiClient extends LlmApiClient<OpenAI> {
         ];
     }
 
-    async getStream(
+    async writeStream(
         prompt: string,
         messages: Message[],
-        model: string
-    ): Promise<Stream<OpenAI.Chat.Completions.ChatCompletionChunk>> {
-        const formattedMessages = this.formatMessages(prompt, messages);
+        model: string,
+        initializeOutput: () => void,
+        appendToOutput: (text: string) => void
+    ): Promise<void> {
+        initializeOutput();
+        const formattedMessages = this.formattedMessages(prompt, messages);
 
         const stream = await this.instance.chat.completions.create({
             model: model,
             messages: formattedMessages,
             stream: true,
         });
-        return stream;
-    }
-
-    async writeStream(
-        stream: Stream<OpenAI.Chat.Completions.ChatCompletionChunk>,
-        initializeOutput: () => void,
-        appendToOutput: (text: string) => void
-    ) {
-        initializeOutput();
         for await (const chunk of stream) {
             appendToOutput(chunk.choices[0]?.delta.content || "");
         }
