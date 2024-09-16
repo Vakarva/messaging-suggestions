@@ -1,3 +1,4 @@
+// WILL BE DEPRECATED
 import { useEffect, useState } from "react";
 
 import { LlmApiClient, LlmApiClientType, Message, Role } from "@custom-types";
@@ -6,6 +7,7 @@ import {
     ClaimContextHook,
     useClaimContext,
 } from "@hooks/useClaimContext";
+import { useMessages } from "@hooks/useMessages";
 
 export interface ModelHook {
     appendMessage: (content: string, role: Role) => void;
@@ -19,11 +21,9 @@ export interface ModelHook {
     setModel: ({
         newClaimContext,
         newLlmModelName,
-        newMessages,
     }: Partial<{
         newClaimContext: ClaimContext;
         newLlmModelName: string;
-        newMessages: Message[];
     }>) => void;
     setLlmModelName: React.Dispatch<React.SetStateAction<string>>;
     streamResponse: (
@@ -40,18 +40,11 @@ export function useModel(
         llmApiClient.defaultModelName
     );
     const [isLoadingStream, setIsLoadingStream] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([]);
+    const { messages, appendMessage } = useMessages();
 
     useEffect(() => {
         setLlmModelName(llmApiClient.defaultModelName);
     }, [llmApiClient]);
-
-    const appendMessage = (content: string, role: Role) => {
-        setMessages((oldMessages) => [
-            ...oldMessages,
-            { content, createdAt: new Date(), role },
-        ]);
-    };
 
     const isSuggestionDisabled = () => {
         const mostRecentRole = messages.at(-1)?.role;
@@ -79,20 +72,15 @@ export function useModel(
     const setModel = ({
         newClaimContext,
         newLlmModelName,
-        newMessages,
     }: Partial<{
         newClaimContext: ClaimContext;
         newLlmModelName: string;
-        newMessages: Message[];
     }>) => {
         if (newClaimContext) {
             claimContext.setClaimContext(newClaimContext);
         }
         if (newLlmModelName) {
             setLlmModelName(newLlmModelName);
-        }
-        if (newMessages) {
-            setMessages(newMessages);
         }
     };
 

@@ -13,6 +13,7 @@ export interface Message {
 // LLM API Client classes
 import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
+import { Stream } from "openai/streaming";
 
 export enum LlmProviderName {
     anthropic = "Anthropic",
@@ -32,6 +33,12 @@ export abstract class LlmApiClient<TClient extends LlmApiClientType> {
     abstract get availableModels(): string[];
 
     abstract isApiKeyValid(): Promise<boolean>;
+    abstract getStream(
+        prompt: string,
+        messages: Message[],
+        model: string
+    ): Promise<any>;
+
     abstract writeStream(
         prompt: string,
         messages: Message[],
@@ -78,7 +85,9 @@ class AnthropicApiClient extends LlmApiClient<Anthropic> {
     }
 
     // Anthropic requires messages to alternate between user and assistant
-    protected mergedMessages(messages: Message[]): AnthropicMessage[] {
+    protected mergedAndFormattedMessages(
+        messages: Message[]
+    ): AnthropicMessage[] {
         return messages.reduce<AnthropicMessage[]>((acc, message, index) => {
             if (index === 0) {
                 acc.push({ role: message.role, content: message.content });
@@ -95,6 +104,24 @@ class AnthropicApiClient extends LlmApiClient<Anthropic> {
         }, []);
     }
 
+    async getStream(
+        prompt: string,
+        messages: Message[],
+        model: string
+    ): Promise<any> {
+        const mergedAndformattedMessages =
+            this.mergedAndFormattedMessages(messages);
+        const stream = await this.instance.messages.stream({
+            system: prompt,
+            messages: mergedAndformattedMessages,
+            model: model,
+            max_tokens: 512,
+            stream: true,
+        });
+
+        return stream;
+    }
+
     async writeStream(
         prompt: string,
         messages: Message[],
@@ -103,12 +130,13 @@ class AnthropicApiClient extends LlmApiClient<Anthropic> {
         appendToOutput: (text: string) => void
     ): Promise<void> {
         initializeOutput();
-        const formattedMessages = this.mergedMessages(messages);
+        const mergedAndFormattedMessages =
+            this.mergedAndFormattedMessages(messages);
 
         await this.instance.messages
             .stream({
                 system: prompt,
-                messages: formattedMessages,
+                messages: mergedAndFormattedMessages,
                 model: model,
                 max_tokens: 512,
                 stream: true,
@@ -162,6 +190,22 @@ class OpenAiApiClient extends LlmApiClient<OpenAI> {
             systemMessage,
             ...messages.map(({ role, content }) => ({ role, content })),
         ];
+    }
+
+    async getStream(
+        prompt: string,
+        messages: Message[],
+        model: string
+    ): Promise<Stream<OpenAI.Chat.Completions.ChatCompletionChunk>> {
+        const formattedMessages = this.formattedMessages(prompt, messages);
+
+        const stream = await this.instance.chat.completions.create({
+            model: model,
+            messages: formattedMessages,
+            stream: true,
+        });
+
+        return stream;
     }
 
     async writeStream(
