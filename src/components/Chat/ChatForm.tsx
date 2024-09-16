@@ -7,14 +7,14 @@ import { Role } from "@custom-types";
 
 import AiToolbar from "@components/Chat/AiToolbar";
 import { useChatFormInput } from "@hooks/useChatFormInput";
-import { ModelHook } from "@hooks/useModel";
+import { ChatHook } from "@hooks/useChat";
 
 interface ChatFormProps {
-    model: ModelHook;
+    chat: ChatHook;
     role: Role;
 }
 
-export default function ChatForm({ model, role }: ChatFormProps) {
+export default function ChatForm({ chat, role }: ChatFormProps) {
     const chatFormInput = useChatFormInput();
 
     // Clear inputs when the role changes
@@ -23,7 +23,7 @@ export default function ChatForm({ model, role }: ChatFormProps) {
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        model.appendMessage(chatFormInput.text.trim(), role); // trim text before adding to conversation
+        chat.messages.append(chatFormInput.text.trim(), role); // trim text before adding to conversation
         chatFormInput.reset();
     }
 
@@ -31,7 +31,7 @@ export default function ChatForm({ model, role }: ChatFormProps) {
         <form onSubmit={handleSubmit}>
             <Group gap="sm">
                 {role === Role.assistant && (
-                    <AiToolbar chatFormInput={chatFormInput} model={model} />
+                    <AiToolbar chat={chat} chatFormInput={chatFormInput} />
                 )}
 
                 <Textarea
@@ -44,7 +44,7 @@ export default function ChatForm({ model, role }: ChatFormProps) {
                     rightSection={
                         <ActionIcon
                             disabled={
-                                model.isLoadingStream ||
+                                chat.isLoadingStream ||
                                 chatFormInput.text.trim() === ""
                             }
                             radius="xl"

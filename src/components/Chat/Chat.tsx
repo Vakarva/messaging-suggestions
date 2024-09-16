@@ -1,20 +1,17 @@
 import { AppShell, Burger, useMantineTheme } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
-import { LlmApiClient, LlmApiClientType } from "@custom-types";
-
 import ChatHistory from "@components/Chat/ChatHistory";
 import Navbar from "@components/Chat/Navbar";
 import RoleTabs from "@components/Chat/RoleTabs";
-import { useModel } from "@hooks/useModel";
+
+import { ChatHook } from "@hooks/useChat";
 
 interface ChatProps {
-    llmApiClient: LlmApiClient<LlmApiClientType>;
-    logout: () => void;
+    chat: ChatHook;
 }
 
-export default function Chat({ llmApiClient, logout }: ChatProps) {
-    const model = useModel(llmApiClient);
+export default function Chat({ chat }: ChatProps) {
     const [opened, { toggle }] = useDisclosure(false);
 
     const theme = useMantineTheme();
@@ -39,13 +36,13 @@ export default function Chat({ llmApiClient, logout }: ChatProps) {
                 />
             </AppShell.Header>
             <AppShell.Navbar bg={theme.colors.gray[0]}>
-                <Navbar logout={logout} model={model} />
+                <Navbar chat={chat} />
             </AppShell.Navbar>
             <AppShell.Main>
-                <ChatHistory messages={model.messages} />
+                <ChatHistory messageData={chat.messages.data} />
             </AppShell.Main>
             <AppShell.Footer bg={theme.colors.gray[0]} p="md">
-                <RoleTabs model={model} />
+                <RoleTabs chat={chat} />
             </AppShell.Footer>
         </AppShell>
     );

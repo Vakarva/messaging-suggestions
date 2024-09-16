@@ -1,44 +1,46 @@
 import { ActionIcon, Tooltip } from "@mantine/core";
 import { IconBrain } from "@tabler/icons-react";
 
-import { ModelHook } from "@hooks/useModel";
+import { ChatHook } from "@hooks/useChat";
 
 interface GetSuggestionProps {
-    model: ModelHook;
+    chat: ChatHook;
     appendToSuggestion: (text: string) => void;
     initializeSuggestion: () => void;
 }
 
 export default function GetSuggestionButton({
-    model,
+    chat,
     appendToSuggestion,
     initializeSuggestion,
 }: GetSuggestionProps) {
     async function streamSuggestion(): Promise<void> {
-        model.setIsLoadingStream(true);
+        await chat.streamResponse(initializeSuggestion, appendToSuggestion);
 
-        try {
-            await model.streamResponse(
-                initializeSuggestion,
-                appendToSuggestion
-            );
-        } catch (error) {
-            console.error("Error fetching suggestion:", error);
-        } finally {
-            model.setIsLoadingStream(false);
-        }
+        // model.setIsLoadingStream(true);
+
+        // try {
+        //     await model.streamResponse(
+        //         initializeSuggestion,
+        //         appendToSuggestion
+        //     );
+        // } catch (error) {
+        //     console.error("Error fetching suggestion:", error);
+        // } finally {
+        //     model.setIsLoadingStream(false);
+        // }
     }
 
     return (
         <>
             <Tooltip
-                label={`New Suggestion: ${model.llmModelName}`}
+                label={`New Suggestion: ${chat.llm.modelName}`}
                 position="bottom"
             >
                 <ActionIcon
                     color="violet"
-                    disabled={model.isSuggestionDisabled()}
-                    loading={model.isLoadingStream}
+                    disabled={chat.messages.isSuggestionDisabled}
+                    loading={chat.isLoadingStream}
                     onClick={streamSuggestion}
                     radius="xl"
                     size="xl"

@@ -7,7 +7,7 @@ import {
     ClaimContextHook,
     useClaimContext,
 } from "@hooks/useClaimContext";
-import { useMessages } from "@hooks/useMessages";
+import { useMessages } from "@hooks/olduseMessages";
 
 export interface ModelHook {
     appendMessage: (content: string, role: Role) => void;

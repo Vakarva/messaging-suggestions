@@ -9,14 +9,14 @@ import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
 
 import GetSuggestionButton from "@components/Chat/GetSuggestionButton";
 import { ChatFormInputHook } from "@hooks/useChatFormInput";
-import { ModelHook } from "@hooks/useModel";
+import { ChatHook } from "@hooks/useChat";
 
 interface AiToolbarProps {
+    chat: ChatHook;
     chatFormInput: ChatFormInputHook;
-    model: ModelHook;
 }
 
-export default function AiToolbar({ chatFormInput, model }: AiToolbarProps) {
+export default function AiToolbar({ chat, chatFormInput }: AiToolbarProps) {
     const theme = useMantineTheme();
     const actionIconParams = {
         color: theme.colors.gray[7],
@@ -53,7 +53,7 @@ export default function AiToolbar({ chatFormInput, model }: AiToolbarProps) {
             <GetSuggestionButton
                 appendToSuggestion={chatFormInput.appendToSuggestion}
                 initializeSuggestion={chatFormInput.initializeSuggestion}
-                model={model}
+                chat={chat}
             />
         </Stack>
     );

@@ -19,7 +19,7 @@ import {
 } from "@tabler/icons-react";
 
 import Settings from "@components/Chat/Settings";
-import { ModelHook } from "@hooks/useModel";
+import { ChatHook } from "@hooks/useChat";
 
 import classes from "@styles/Navbar.module.css";
 
@@ -57,11 +57,10 @@ const items = [
 ];
 
 interface NavbarProps {
-    logout: () => void;
-    model: ModelHook;
+    chat: ChatHook;
 }
 
-export default function Navbar({ logout, model }: NavbarProps) {
+export default function Navbar({ chat }: NavbarProps) {
     const [active, setActive] = useState(2);
     const [opened, { open, close }] = useDisclosure(false);
 
@@ -79,7 +78,7 @@ export default function Navbar({ logout, model }: NavbarProps) {
     return (
         <nav className={classes.navbar}>
             <Drawer onClose={close} opened={opened} title="Settings">
-                <Settings close={close} model={model} />
+                <Settings close={close} chat={chat} />
             </Drawer>
             <Center>
                 <IconMessageChatbotFilled
@@ -100,7 +99,7 @@ export default function Navbar({ logout, model }: NavbarProps) {
                     <NavbarLink
                         icon={IconLogout2}
                         label="Logout"
-                        onClick={logout}
+                        onClick={chat.llm.apiSession.logout}
                     />
                 </Stack>
             </div>

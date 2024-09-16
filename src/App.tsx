@@ -2,10 +2,11 @@ import { Modal } from "@mantine/core";
 
 import ApiKeyLogin from "@components/Login/ApiKeyLogin";
 import Chat from "@components/Chat/Chat";
-import useApiKeyLogin, { ApiKeyLoginStatus } from "@hooks/useApiKeyLogin";
+import { ApiSessionStatus } from "@hooks/useApiSession";
+import { useChat } from "@hooks/useChat";
 
 export default function App() {
-    const apiKeyLogin = useApiKeyLogin();
+    const chat = useChat();
 
     return (
         <>
@@ -14,7 +15,7 @@ export default function App() {
                 closeOnClickOutside={false}
                 closeOnEscape={false}
                 onClose={() => {}}
-                opened={apiKeyLogin.status !== ApiKeyLoginStatus.SUCCESS}
+                opened={chat.llm.apiSession.status !== ApiSessionStatus.SUCCESS}
                 overlayProps={{
                     blur: 3,
                 }}
@@ -29,13 +30,10 @@ export default function App() {
                 title="Enter API Key"
                 withCloseButton={false}
             >
-                <ApiKeyLogin {...apiKeyLogin} />
+                <ApiKeyLogin {...chat.llm.apiSession} />
             </Modal>
 
-            <Chat
-                llmApiClient={apiKeyLogin.llmApiClient}
-                logout={apiKeyLogin.logout}
-            />
+            <Chat chat={chat} />
         </>
     );
 }

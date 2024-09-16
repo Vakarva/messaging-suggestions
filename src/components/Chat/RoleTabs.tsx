@@ -5,13 +5,13 @@ import { IconHeartbeat, IconUserFilled } from "@tabler/icons-react";
 import { Role } from "@custom-types";
 
 import ChatForm from "@components/Chat/ChatForm";
-import { ModelHook } from "@hooks/useModel";
+import { ChatHook } from "@hooks/useChat";
 
 interface RoleTabsProps {
-    model: ModelHook;
+    chat: ChatHook;
 }
 
-export default function RoleTabs({ model }: RoleTabsProps) {
+export default function RoleTabs({ chat }: RoleTabsProps) {
     const [activeTab, setActiveTab] = useState<string | null>(Role.user);
 
     const theme = useMantineTheme();
@@ -69,7 +69,7 @@ export default function RoleTabs({ model }: RoleTabsProps) {
                 </Tabs.List>
             </Tabs>
             <ChatForm
-                model={model}
+                chat={chat}
                 role={activeTab === Role.user ? Role.user : Role.assistant}
             />
         </Stack>

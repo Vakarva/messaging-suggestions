@@ -9,17 +9,17 @@ import {
 } from "@mantine/core";
 
 import { useClaimContext } from "@hooks/useClaimContext";
-import { ModelHook } from "@hooks/useModel";
+import { ChatHook } from "@hooks/useChat";
 
 interface SettingsProps {
+    chat: ChatHook;
     close: () => void;
-    model: ModelHook;
 }
 
-export default function Settings({ close, model }: SettingsProps) {
-    const draftClaimContext = useClaimContext(model.claimContext);
+export default function Settings({ close, chat }: SettingsProps) {
+    const draftClaimContext = useClaimContext(chat.claimContext);
     const [draftModelName, setDraftModelName] = useState<string>(
-        model.llmModelName
+        chat.llm.modelName
     );
 
     return (
@@ -69,7 +69,7 @@ export default function Settings({ close, model }: SettingsProps) {
             <Fieldset legend="LLM Behavior">
                 <Select
                     allowDeselect={false}
-                    data={model.llmApiClient.availableModels}
+                    data={chat.llm.apiSession.client.availableModels}
                     label="Model"
                     onChange={(value) => setDraftModelName(value!)}
                     value={draftModelName}
@@ -77,7 +77,7 @@ export default function Settings({ close, model }: SettingsProps) {
             </Fieldset>
             <Button
                 onClick={() => {
-                    model.setModel({
+                    chat.updateLlmSettings({
                         newClaimContext: draftClaimContext,
                         newLlmModelName: draftModelName,
                     });

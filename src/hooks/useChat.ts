@@ -5,7 +5,7 @@ import {
     ClaimContextHook,
     useClaimContext,
 } from "@hooks/useClaimContext";
-import { MessagesHook, useMessages } from "@hooks/newuseMessages";
+import { MessagesHook, useMessages } from "@hooks/useMessages";
 import { LlmHook, useLlm } from "@hooks/useLlm";
 
 export interface OutputHandler {
@@ -15,7 +15,7 @@ export interface OutputHandler {
 
 export interface ChatHook {
     claimContext: ClaimContextHook;
-    getLlmResponseStream: () => AsyncGenerator<string>;
+    // getLlmResponseStream: () => AsyncGenerator<string>;
     isLoadingStream: boolean;
     llm: LlmHook;
     messages: MessagesHook;
@@ -39,22 +39,23 @@ export function useChat(): ChatHook {
 
     const [isLoadingStream, setIsLoadingStream] = useState(false);
 
-    async function* getLlmResponseStream(): AsyncGenerator<string> {
-        setIsLoadingStream(true);
-        const prompt = claimContext.buildSystemMessage();
-        const responseStream = await llm.apiSession.client.getStream(
-            prompt,
-            messages.data,
-            llm.modelName
-        );
+    // TODO: Want to integrate this way of getting a stream
+    // async function* getLlmResponseStream(): AsyncGenerator<string> {
+    //     setIsLoadingStream(true);
+    //     const prompt = claimContext.buildSystemMessage();
+    //     const responseStream = await llm.apiSession.client.getStream(
+    //         prompt,
+    //         messages.data,
+    //         llm.modelName
+    //     );
 
-        for await (const chunk of responseStream) {
-            yield chunk;
-        }
-        setIsLoadingStream(false);
-    }
+    //     for await (const chunk of responseStream) {
+    //         yield chunk;
+    //     }
+    //     setIsLoadingStream(false);
+    // }
 
-    // TODO: Deprecate this
+    // TODO: Want to deprecate this
     const streamResponse = async (
         initializeOutput: () => void,
         appendToOutput: (text: string) => void
@@ -93,7 +94,7 @@ export function useChat(): ChatHook {
 
     return {
         claimContext,
-        getLlmResponseStream,
+        // getLlmResponseStream,
         isLoadingStream,
         llm,
         messages,

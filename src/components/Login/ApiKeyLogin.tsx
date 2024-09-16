@@ -1,7 +1,7 @@
 import { Button, Select, PasswordInput, Space } from "@mantine/core";
 
 import { LlmProviderName } from "@custom-types";
-import { ApiKeyLoginHook, ApiKeyLoginStatus } from "@hooks/useApiKeyLogin";
+import { ApiSessionHook, ApiSessionStatus } from "@hooks/useApiSession";
 
 export default function ApiKeyLogin({
     apiKey,
@@ -9,9 +9,9 @@ export default function ApiKeyLogin({
     editApiKey,
     editApiProviderName,
     status,
-    submitApiKey,
-}: ApiKeyLoginHook) {
-    const isLoading = status === ApiKeyLoginStatus.LOADING;
+    validateApiKey,
+}: ApiSessionHook) {
+    const isLoading = status === ApiSessionStatus.LOADING;
 
     return (
         <>
@@ -27,7 +27,7 @@ export default function ApiKeyLogin({
                 data-autofocus
                 disabled={isLoading}
                 error={
-                    status === ApiKeyLoginStatus.ERROR
+                    status === ApiSessionStatus.ERROR
                         ? "Incorrect API Key: Please try again"
                         : undefined
                 }
@@ -41,7 +41,7 @@ export default function ApiKeyLogin({
                 disabled={apiKey.trim().length === 0}
                 fullWidth
                 loading={isLoading}
-                onClick={submitApiKey}
+                onClick={validateApiKey}
             >
                 Submit
             </Button>
