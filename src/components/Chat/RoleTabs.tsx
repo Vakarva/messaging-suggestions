@@ -29,14 +29,13 @@ export default function RoleTabs({ chat }: RoleTabsProps) {
         },
     };
 
+    const handleTabChange = (value: string | null) => {
+        chat.form.setRole(value as Role);
+    };
+
     return (
         <Stack gap="xs">
-            <Tabs
-                value={chat.form.role}
-                onChange={(value: string | null) => {
-                    chat.form.setRole(value as Role);
-                }}
-            >
+            <Tabs value={chat.form.role} onChange={handleTabChange}>
                 <Tabs.List grow>
                     <Tabs.Tab
                         leftSection={

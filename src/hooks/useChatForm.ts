@@ -22,6 +22,7 @@ export interface ChatFormHook {
     setText: (text: string) => void;
     submit: () => void;
     text: string;
+    toggleRole: () => void;
     undo: () => void;
 }
 
@@ -73,6 +74,12 @@ export function useChatForm(): ChatFormHook {
         resetText();
     };
 
+    const toggleRole = () => {
+        setRole((oldRole) =>
+            oldRole === Role.user ? Role.assistant : Role.user
+        );
+    };
+
     const undo = () => {
         setTextSelection(TextSelection.USER);
     };
@@ -90,6 +97,7 @@ export function useChatForm(): ChatFormHook {
         setText,
         submit,
         text,
+        toggleRole,
         undo,
     };
 }

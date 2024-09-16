@@ -12,11 +12,11 @@ interface ChatFormProps {
 }
 
 export default function ChatForm({ chat }: ChatFormProps) {
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         chat.form.submit();
-    }
+    };
 
     return (
         <form onSubmit={handleSubmit}>
@@ -31,7 +31,18 @@ export default function ChatForm({ chat }: ChatFormProps) {
                     maxRows={4}
                     minRows={4}
                     onChange={(e) => chat.form.setText(e.target.value)}
-                    onKeyDown={getHotkeyHandler([["mod+Enter", handleSubmit]])}
+                    onKeyDown={getHotkeyHandler([
+                        ["mod+Enter", handleSubmit],
+                        [
+                            "mod+Shift+Enter",
+                            chat.form.role === Role.assistant
+                                ? chat.streamLlmResponse
+                                : () => {},
+                        ],
+                        ["mod+/", chat.form.toggleRole],
+                        ["mod+Shift+,", chat.form.undo],
+                        ["mod+Shift+.", chat.form.redo],
+                    ])}
                     rightSection={
                         <ActionIcon
                             disabled={chat.isLoadingStream || chat.form.isEmpty}

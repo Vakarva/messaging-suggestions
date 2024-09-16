@@ -10,10 +10,6 @@ interface GetSuggestionProps {
 }
 
 export default function GetSuggestionButton({ chat }: GetSuggestionProps) {
-    async function streamSuggestion(): Promise<void> {
-        await chat.streamLlmResponse();
-    }
-
     return (
         <>
             <Tooltip
@@ -24,7 +20,7 @@ export default function GetSuggestionButton({ chat }: GetSuggestionProps) {
                     color="violet"
                     disabled={chat.form.messages.isSuggestionDisabled}
                     loading={chat.isLoadingStream}
-                    onClick={streamSuggestion}
+                    onClick={chat.streamLlmResponse}
                     radius="xl"
                     size="xl"
                     variant="filled"
@@ -35,28 +31,3 @@ export default function GetSuggestionButton({ chat }: GetSuggestionProps) {
         </>
     );
 }
-
-// await chatForm.streamSuggestion(await chat.getLlmResponseStream());
-
-// chat.setIsLoadingStream(true);
-// chatForm.initializeSuggestion();
-// const stream = await chat.getLlmResponseStream();
-// for await (const text of stream) {
-//     chatForm.appendToSuggestion(text);
-// }
-// chat.setIsLoadingStream(false);
-
-// await chat.streamResponse(initializeSuggestion, appendToSuggestion);
-
-// model.setIsLoadingStream(true);
-
-// try {
-//     await model.streamResponse(
-//         initializeSuggestion,
-//         appendToSuggestion
-//     );
-// } catch (error) {
-//     console.error("Error fetching suggestion:", error);
-// } finally {
-//     model.setIsLoadingStream(false);
-// }
