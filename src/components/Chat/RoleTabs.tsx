@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Stack, Tabs, ThemeIcon, useMantineTheme } from "@mantine/core";
 import { IconHeartbeat, IconUserFilled } from "@tabler/icons-react";
 
@@ -12,8 +11,6 @@ interface RoleTabsProps {
 }
 
 export default function RoleTabs({ chat }: RoleTabsProps) {
-    const [activeTab, setActiveTab] = useState<string | null>(Role.user);
-
     const theme = useMantineTheme();
 
     const activeTabGradient = {
@@ -34,12 +31,17 @@ export default function RoleTabs({ chat }: RoleTabsProps) {
 
     return (
         <Stack gap="xs">
-            <Tabs value={activeTab} onChange={setActiveTab}>
+            <Tabs
+                value={chat.form.role}
+                onChange={(value: string | null) => {
+                    chat.form.setRole(value as Role);
+                }}
+            >
                 <Tabs.List grow>
                     <Tabs.Tab
                         leftSection={
                             <ThemeIcon
-                                {...(activeTab === Role.user
+                                {...(chat.form.role === Role.user
                                     ? activeTabGradient
                                     : inactiveTabGradient)}
                                 variant="gradient"
@@ -54,7 +56,7 @@ export default function RoleTabs({ chat }: RoleTabsProps) {
                     <Tabs.Tab
                         leftSection={
                             <ThemeIcon
-                                {...(activeTab === Role.assistant
+                                {...(chat.form.role === Role.assistant
                                     ? activeTabGradient
                                     : inactiveTabGradient)}
                                 variant="gradient"
@@ -68,10 +70,7 @@ export default function RoleTabs({ chat }: RoleTabsProps) {
                     </Tabs.Tab>
                 </Tabs.List>
             </Tabs>
-            <ChatForm
-                chat={chat}
-                role={activeTab === Role.user ? Role.user : Role.assistant}
-            />
+            <ChatForm chat={chat} />
         </Stack>
     );
 }

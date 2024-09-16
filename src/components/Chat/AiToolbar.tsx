@@ -8,19 +8,16 @@ import {
 import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
 
 import GetSuggestionButton from "@components/Chat/GetSuggestionButton";
-import { ChatFormInputHook } from "@hooks/useChatFormInput";
 import { ChatHook } from "@hooks/useChat";
 
 interface AiToolbarProps {
     chat: ChatHook;
-    chatFormInput: ChatFormInputHook;
 }
 
-export default function AiToolbar({ chat, chatFormInput }: AiToolbarProps) {
+export default function AiToolbar({ chat }: AiToolbarProps) {
     const theme = useMantineTheme();
     const actionIconParams = {
         color: theme.colors.gray[7],
-        onClick: chatFormInput.toggle,
         radius: "xl",
         size: "lg",
         variant: "filled",
@@ -36,7 +33,8 @@ export default function AiToolbar({ chat, chatFormInput }: AiToolbarProps) {
                 <Tooltip label="Undo suggestion">
                     <ActionIcon
                         {...actionIconParams}
-                        disabled={chatFormInput.isUserButtonDisabled}
+                        disabled={chat.form.isUndoDisabled}
+                        onClick={chat.form.undo}
                     >
                         <IconArrowBackUp {...iconStyles} />
                     </ActionIcon>
@@ -44,17 +42,14 @@ export default function AiToolbar({ chat, chatFormInput }: AiToolbarProps) {
                 <Tooltip label="Redo suggestion">
                     <ActionIcon
                         {...actionIconParams}
-                        disabled={chatFormInput.isLlmButtonDisabled}
+                        disabled={chat.form.isRedoDisabled}
+                        onClick={chat.form.redo}
                     >
                         <IconArrowForwardUp {...iconStyles} />
                     </ActionIcon>
                 </Tooltip>
             </Group>
-            <GetSuggestionButton
-                appendToSuggestion={chatFormInput.appendToSuggestion}
-                initializeSuggestion={chatFormInput.initializeSuggestion}
-                chat={chat}
-            />
+            <GetSuggestionButton chat={chat} chatForm={chat.form} />
         </Stack>
     );
 }

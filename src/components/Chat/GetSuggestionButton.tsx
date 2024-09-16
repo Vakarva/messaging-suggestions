@@ -2,33 +2,16 @@ import { ActionIcon, Tooltip } from "@mantine/core";
 import { IconBrain } from "@tabler/icons-react";
 
 import { ChatHook } from "@hooks/useChat";
+import { ChatFormHook } from "@hooks/useChatForm";
 
 interface GetSuggestionProps {
     chat: ChatHook;
-    appendToSuggestion: (text: string) => void;
-    initializeSuggestion: () => void;
+    chatForm: ChatFormHook;
 }
 
-export default function GetSuggestionButton({
-    chat,
-    appendToSuggestion,
-    initializeSuggestion,
-}: GetSuggestionProps) {
+export default function GetSuggestionButton({ chat }: GetSuggestionProps) {
     async function streamSuggestion(): Promise<void> {
-        await chat.streamResponse(initializeSuggestion, appendToSuggestion);
-
-        // model.setIsLoadingStream(true);
-
-        // try {
-        //     await model.streamResponse(
-        //         initializeSuggestion,
-        //         appendToSuggestion
-        //     );
-        // } catch (error) {
-        //     console.error("Error fetching suggestion:", error);
-        // } finally {
-        //     model.setIsLoadingStream(false);
-        // }
+        await chat.streamLlmResponse();
     }
 
     return (
@@ -39,7 +22,7 @@ export default function GetSuggestionButton({
             >
                 <ActionIcon
                     color="violet"
-                    disabled={chat.messages.isSuggestionDisabled}
+                    disabled={chat.form.messages.isSuggestionDisabled}
                     loading={chat.isLoadingStream}
                     onClick={streamSuggestion}
                     radius="xl"
@@ -52,3 +35,28 @@ export default function GetSuggestionButton({
         </>
     );
 }
+
+// await chatForm.streamSuggestion(await chat.getLlmResponseStream());
+
+// chat.setIsLoadingStream(true);
+// chatForm.initializeSuggestion();
+// const stream = await chat.getLlmResponseStream();
+// for await (const text of stream) {
+//     chatForm.appendToSuggestion(text);
+// }
+// chat.setIsLoadingStream(false);
+
+// await chat.streamResponse(initializeSuggestion, appendToSuggestion);
+
+// model.setIsLoadingStream(true);
+
+// try {
+//     await model.streamResponse(
+//         initializeSuggestion,
+//         appendToSuggestion
+//     );
+// } catch (error) {
+//     console.error("Error fetching suggestion:", error);
+// } finally {
+//     model.setIsLoadingStream(false);
+// }

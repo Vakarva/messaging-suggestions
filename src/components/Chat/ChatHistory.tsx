@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Box, ScrollArea, Stack } from "@mantine/core";
+import { Box, Stack } from "@mantine/core";
 import { useScrollIntoView } from "@mantine/hooks";
 
 import { Message, Role } from "@custom-types";
@@ -29,11 +29,9 @@ export default function ChatHistory({ messageData }: ChatHistoryProps) {
     }, [messageData]);
 
     return (
-        <ScrollArea offsetScrollbars scrollbarSize={6} type="scroll">
-            <Stack>
-                {messageElements}
-                <div ref={targetRef} />
-            </Stack>
-        </ScrollArea>
+        <Stack>
+            {messageElements}
+            <div ref={targetRef} />
+        </Stack>
     );
 }

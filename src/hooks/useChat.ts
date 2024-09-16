@@ -5,8 +5,9 @@ import {
     ClaimContextHook,
     useClaimContext,
 } from "@hooks/useClaimContext";
-import { MessagesHook, useMessages } from "@hooks/useMessages";
+
 import { LlmHook, useLlm } from "@hooks/useLlm";
+import { ChatFormHook, useChatForm } from "@hooks/useChatForm";
 
 export interface OutputHandler {
     initialize: () => void;
@@ -15,14 +16,10 @@ export interface OutputHandler {
 
 export interface ChatHook {
     claimContext: ClaimContextHook;
-    // getLlmResponseStream: () => AsyncGenerator<string>;
-    isLoadingStream: boolean;
+    form: ChatFormHook;
     llm: LlmHook;
-    messages: MessagesHook;
-    streamResponse: (
-        initializeOutput: () => void,
-        appendToOutput: (text: string) => void
-    ) => Promise<void>;
+    isLoadingStream: boolean;
+    streamLlmResponse: () => Promise<void>;
     updateLlmSettings: ({
         newClaimContext,
         newLlmModelName,
@@ -35,42 +32,22 @@ export interface ChatHook {
 export function useChat(): ChatHook {
     const llm = useLlm();
     const claimContext = useClaimContext({});
-    const messages = useMessages();
+    const form = useChatForm();
+    const [isLoadingStream, setIsLoadingStream] = useState(false); // consider making a custom hook for purely UI state?
 
-    const [isLoadingStream, setIsLoadingStream] = useState(false);
-
-    // TODO: Want to integrate this way of getting a stream
-    // async function* getLlmResponseStream(): AsyncGenerator<string> {
-    //     setIsLoadingStream(true);
-    //     const prompt = claimContext.buildSystemMessage();
-    //     const responseStream = await llm.apiSession.client.getStream(
-    //         prompt,
-    //         messages.data,
-    //         llm.modelName
-    //     );
-
-    //     for await (const chunk of responseStream) {
-    //         yield chunk;
-    //     }
-    //     setIsLoadingStream(false);
-    // }
-
-    // TODO: Want to deprecate this
-    const streamResponse = async (
-        initializeOutput: () => void,
-        appendToOutput: (text: string) => void
-    ): Promise<void> => {
+    const streamLlmResponse = async (): Promise<void> => {
         setIsLoadingStream(true);
         const prompt = claimContext.buildSystemMessage();
-
         try {
-            await llm.apiSession.client.writeStream(
+            const stream = await llm.apiSession.client.getStream(
                 prompt,
-                messages.data,
-                llm.modelName,
-                initializeOutput,
-                appendToOutput
+                form.messages.data,
+                llm.modelName
             );
+            form.initialize();
+            for await (const chunk of stream) {
+                form.append(chunk);
+            }
         } catch (error) {
             throw error;
         } finally {
@@ -95,11 +72,10 @@ export function useChat(): ChatHook {
 
     return {
         claimContext,
-        // getLlmResponseStream,
-        isLoadingStream,
+        form,
         llm,
-        messages,
-        streamResponse,
+        isLoadingStream,
+        streamLlmResponse,
         updateLlmSettings,
     };
 }

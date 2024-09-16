@@ -13,7 +13,6 @@ export interface Message {
 // LLM API Client classes
 import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
-import { Stream } from "openai/streaming";
 
 export enum LlmProviderName {
     anthropic = "Anthropic",
@@ -37,15 +36,7 @@ export abstract class LlmApiClient<TClient extends LlmApiClientType> {
         prompt: string,
         messages: Message[],
         model: string
-    ): Promise<any>;
-
-    abstract writeStream(
-        prompt: string,
-        messages: Message[],
-        model: string,
-        initializeOutput: () => void,
-        appendToOutput: (text: string) => void
-    ): Promise<void>;
+    ): Promise<AsyncIterable<string>>;
 }
 
 interface AnthropicMessage {
@@ -108,40 +99,29 @@ class AnthropicApiClient extends LlmApiClient<Anthropic> {
         prompt: string,
         messages: Message[],
         model: string
-    ): Promise<any> {
-        const mergedAndformattedMessages =
+    ): Promise<AsyncIterable<string>> {
+        const mergedAndFormattedMessages =
             this.mergedAndFormattedMessages(messages);
         const stream = await this.instance.messages.stream({
             system: prompt,
-            messages: mergedAndformattedMessages,
+            messages: mergedAndFormattedMessages,
             model: model,
             max_tokens: 512,
             stream: true,
         });
 
-        return stream;
-    }
+        async function* streamGenerator(): AsyncGenerator<string> {
+            for await (const event of stream) {
+                if (
+                    event.type === "content_block_delta" &&
+                    event.delta.type === "text_delta"
+                ) {
+                    yield event.delta.text;
+                }
+            }
+        }
 
-    async writeStream(
-        prompt: string,
-        messages: Message[],
-        model: string,
-        initializeOutput: () => void,
-        appendToOutput: (text: string) => void
-    ): Promise<void> {
-        initializeOutput();
-        const mergedAndFormattedMessages =
-            this.mergedAndFormattedMessages(messages);
-
-        await this.instance.messages
-            .stream({
-                system: prompt,
-                messages: mergedAndFormattedMessages,
-                model: model,
-                max_tokens: 512,
-                stream: true,
-            })
-            .on("text", appendToOutput);
+        return streamGenerator();
     }
 }
 
@@ -177,7 +157,7 @@ class OpenAiApiClient extends LlmApiClient<OpenAI> {
         }
     }
 
-    protected formattedMessages(
+    private formattedMessages(
         prompt: string,
         messages: Message[]
     ): OpenAiMessage[] {
@@ -196,7 +176,7 @@ class OpenAiApiClient extends LlmApiClient<OpenAI> {
         prompt: string,
         messages: Message[],
         model: string
-    ): Promise<Stream<OpenAI.Chat.Completions.ChatCompletionChunk>> {
+    ): Promise<AsyncIterable<string>> {
         const formattedMessages = this.formattedMessages(prompt, messages);
 
         const stream = await this.instance.chat.completions.create({
@@ -205,27 +185,17 @@ class OpenAiApiClient extends LlmApiClient<OpenAI> {
             stream: true,
         });
 
-        return stream;
-    }
-
-    async writeStream(
-        prompt: string,
-        messages: Message[],
-        model: string,
-        initializeOutput: () => void,
-        appendToOutput: (text: string) => void
-    ): Promise<void> {
-        initializeOutput();
-        const formattedMessages = this.formattedMessages(prompt, messages);
-
-        const stream = await this.instance.chat.completions.create({
-            model: model,
-            messages: formattedMessages,
-            stream: true,
-        });
-        for await (const chunk of stream) {
-            appendToOutput(chunk.choices[0]?.delta.content || "");
+        // Wrap the stream to extract the content
+        async function* streamGenerator(): AsyncGenerator<string> {
+            for await (const chunk of stream) {
+                const content = chunk.choices[0]?.delta?.content;
+                if (content) {
+                    yield content;
+                }
+            }
         }
+
+        return streamGenerator();
     }
 }
 
