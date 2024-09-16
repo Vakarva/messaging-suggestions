@@ -12,8 +12,8 @@ export function useMessages(): MessagesHook {
     const [data, setData] = useState<Message[]>([]);
 
     const append = (content: string, role: Role) => {
-        setData((oldMessages) => [
-            ...oldMessages,
+        setData((oldData) => [
+            ...oldData,
             { content, createdAt: new Date(), role },
         ]);
     };
