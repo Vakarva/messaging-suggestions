@@ -13,9 +13,14 @@ export function useLlm(): LlmHook {
         apiSession.client.defaultModelName
     );
 
-    // TODO: confirm that the dependency here is a wise choice
     useEffect(() => {
-        setModelName(apiSession.client.defaultModelName);
+        if (
+            !apiSession.client.availableModels.find(
+                (model) => model === modelName
+            )
+        ) {
+            setModelName(apiSession.client.defaultModelName);
+        }
     }, [apiSession.client]);
 
     return {
