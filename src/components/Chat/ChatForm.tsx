@@ -4,7 +4,7 @@ import { IconArrowUp } from "@tabler/icons-react";
 
 import { Role } from "@custom-types";
 
-import AiToolbar from "@components/Chat/AiToolbar";
+import AiActionPanel from "@components/Chat/AiActionPanel";
 import { ChatHook } from "@hooks/useChat";
 
 interface ChatFormProps {
@@ -21,7 +21,9 @@ export default function ChatForm({ chat }: ChatFormProps) {
     return (
         <form onSubmit={handleSubmit}>
             <Group gap="sm">
-                {chat.form.role === Role.assistant && <AiToolbar chat={chat} />}
+                {chat.form.role === Role.assistant && (
+                    <AiActionPanel chat={chat} />
+                )}
 
                 <Textarea
                     aria-label="Message input"

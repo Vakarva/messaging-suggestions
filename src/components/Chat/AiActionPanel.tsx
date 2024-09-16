@@ -10,11 +10,11 @@ import { IconArrowBackUp, IconArrowForwardUp } from "@tabler/icons-react";
 import GetSuggestionButton from "@components/Chat/GetSuggestionButton";
 import { ChatHook } from "@hooks/useChat";
 
-interface AiToolbarProps {
+interface AiActionPanelProps {
     chat: ChatHook;
 }
 
-export default function AiToolbar({ chat }: AiToolbarProps) {
+export default function AiActionPanel({ chat }: AiActionPanelProps) {
     const theme = useMantineTheme();
     const actionIconParams = {
         color: theme.colors.gray[7],
