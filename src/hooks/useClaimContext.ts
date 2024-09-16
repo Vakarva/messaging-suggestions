@@ -87,7 +87,7 @@ export const useClaimContext = (
     }
 
     const buildSystemMessage = (): string => {
-        // Static prompts
+        // "Static" prompts
         let promptsArray = [
             "You are a helpful insurance claims adjuster.",
             "You are aiding an injured worker and responding to any questions they have about their insurance case.",
@@ -95,6 +95,7 @@ export const useClaimContext = (
             "Avoid using markdown such as bold, numbered lists, or headings.",
             "Keep your responses conversational and plain-text only, with short and simple sentences.",
             "Keep the conversation focused on their insurance claim and any related issues; redirect back to their insurance claim if the conversation strays.",
+            `The current local date and time is ${new Date().toLocaleString()}.`,
         ];
 
         // Dynamically populate additional prompts given current ClaimContext fields

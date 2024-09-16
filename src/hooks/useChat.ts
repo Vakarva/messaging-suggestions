@@ -62,6 +62,7 @@ export function useChat(): ChatHook {
     ): Promise<void> => {
         setIsLoadingStream(true);
         const prompt = claimContext.buildSystemMessage();
+        console.log("prompt", prompt);
         try {
             await llm.apiSession.client.writeStream(
                 prompt,
