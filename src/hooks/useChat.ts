@@ -49,7 +49,7 @@ export function useChat(): ChatHook {
                 form.append(chunk);
             }
         } catch (error) {
-            throw error;
+            console.error("Error fetching LLM response:", error);
         } finally {
             setIsLoadingStream(false);
         }
