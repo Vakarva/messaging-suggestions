@@ -17,6 +17,7 @@ interface ControlButtonProps {
     icon: typeof IconArrowBackUp;
     label: string;
     disabled: boolean;
+    openDelay?: number;
     onClick: () => void;
 }
 
@@ -24,12 +25,13 @@ function ControlButton({
     icon: Icon,
     label,
     disabled,
+    openDelay,
     onClick,
 }: ControlButtonProps) {
     const theme = useMantineTheme();
 
     return (
-        <Tooltip label={label}>
+        <Tooltip label={label} openDelay={openDelay}>
             <ActionIcon
                 color={theme.colors.gray[7]}
                 disabled={disabled}
@@ -49,6 +51,7 @@ interface AiActionPanelProps {
 }
 
 export default function AiActionPanel({ chat }: AiActionPanelProps) {
+    const openDelay = 300;
     const controlItems = [
         {
             icon: IconArrowBackUp,
@@ -69,6 +72,7 @@ export default function AiActionPanel({ chat }: AiActionPanelProps) {
             icon={item.icon}
             label={item.label}
             disabled={item.disabled}
+            openDelay={openDelay}
             onClick={item.onClick}
         />
     ));
@@ -78,6 +82,7 @@ export default function AiActionPanel({ chat }: AiActionPanelProps) {
             <Group gap="xs">{controlButtons}</Group>
             <Tooltip
                 label={`New Suggestion: ${chat.llm.modelName}`}
+                openDelay={openDelay}
                 position="bottom"
             >
                 <ActionIcon

@@ -1,23 +1,22 @@
-import { useState } from "react";
 import {
-    Center,
-    Drawer,
-    Tooltip,
     Button,
+    Drawer,
+    Divider,
+    rem,
     Space,
     Stack,
-    rem,
-    useMantineTheme,
+    Text,
+    Tooltip,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
     IconHome2,
     IconGauge,
     IconLogout2,
-    IconMessageChatbotFilled,
     IconSettings,
 } from "@tabler/icons-react";
 
+import Logo from "@components/Chat/Logo";
 import Settings from "@components/Chat/Settings";
 import { ChatHook } from "@hooks/useChat";
 
@@ -25,84 +24,81 @@ import classes from "@styles/Navbar.module.css";
 
 interface NavbarLinkProps {
     icon: typeof IconSettings;
+    isMobile: boolean;
     label: string;
-    active?: boolean;
     onClick?(): void;
 }
 
-function NavbarLink({ icon: Icon, label, onClick }: NavbarLinkProps) {
+function NavbarLink({ icon: Icon, isMobile, label, onClick }: NavbarLinkProps) {
     return (
         <Tooltip
+            disabled={isMobile}
             label={label}
             position="right"
             transitionProps={{ duration: 0 }}
         >
             <Button
-                className={classes.link}
+                className={classes.navbarLink}
+                display="flex"
+                h="100%"
                 onClick={onClick}
-                variant="transparent"
+                p="md"
+                radius="md"
+                variant="subtle"
+                w={isMobile ? "100%" : undefined}
             >
                 <Icon
                     style={{ width: rem(20), height: rem(20) }}
                     stroke={1.5}
                 />
+                {isMobile && <Text ml="sm">{label}</Text>}
             </Button>
         </Tooltip>
     );
 }
 
-const items = [
-    { icon: IconHome2, label: "Home" },
-    { icon: IconGauge, label: "Dashboard" },
-];
-
 interface NavbarProps {
     chat: ChatHook;
+    isMobile: boolean;
 }
 
-export default function Navbar({ chat }: NavbarProps) {
-    const [active, setActive] = useState(2);
-    const [opened, { open, close }] = useDisclosure(false);
+export default function Navbar({ chat, isMobile }: NavbarProps) {
+    const [isSettingsOpened, { open: openSettings, close: closeSettings }] =
+        useDisclosure(false);
 
-    const theme = useMantineTheme();
+    const items = [
+        { icon: IconHome2, label: "Home" },
+        { icon: IconGauge, label: "Dashboard" },
+        { icon: IconSettings, label: "Settings", onClick: openSettings },
+    ];
 
-    const links = items.map((link, index) => (
-        <NavbarLink
-            {...link}
-            key={link.label}
-            active={index === active}
-            onClick={() => setActive(index)}
-        />
+    const links = items.map((link) => (
+        <NavbarLink {...link} isMobile={isMobile} key={link.label} />
     ));
 
     return (
-        <nav className={classes.navbar}>
-            <Drawer onClose={close} opened={opened} title="Settings">
-                <Settings close={close} chat={chat} />
+        <Stack>
+            <Drawer
+                onClose={closeSettings}
+                opened={isSettingsOpened}
+                title="Settings"
+            >
+                <Settings close={closeSettings} chat={chat} />
             </Drawer>
-            <Center>
-                <IconMessageChatbotFilled
-                    color={theme.colors.blue[8]}
-                    size={30}
-                />
-            </Center>
 
-            <div className={classes.navbarMain}>
-                <Stack justify="center" gap={0}>
-                    {links}
-                    <NavbarLink
-                        icon={IconSettings}
-                        label="Settings"
-                        onClick={open}
-                    />
-                    <Space h={40} />
-                    <NavbarLink
-                        icon={IconLogout2}
-                        label="Logout"
-                        onClick={chat.llm.apiSession.logout}
-                    />
-                </Stack>
-            </div>
-        </nav>
+            <Stack mt={20}>
+                <Logo isMobile={isMobile} />
+            </Stack>
+            <Stack align="flex-start" gap={0} mt={0}>
+                {links}
+                <Space h={40} />
+                <NavbarLink
+                    icon={IconLogout2}
+                    isMobile={isMobile}
+                    label="Logout"
+                    onClick={chat.llm.apiSession.logout}
+                />
+            </Stack>
+        </Stack>
     );
 }
