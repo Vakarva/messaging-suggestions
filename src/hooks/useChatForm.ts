@@ -39,9 +39,6 @@ export function useChatForm(): ChatFormHook {
     const isUndoDisabled = !llmTextBox || textSelection === TextSelection.USER;
     const isRedoDisabled = !llmTextBox || textSelection === TextSelection.LLM;
 
-    // Clear inputs when role changes
-    useEffect(resetText, [role]);
-
     const append = (text: string) => {
         setLlmTextBox((oldValue) => oldValue + text);
     };
@@ -55,11 +52,11 @@ export function useChatForm(): ChatFormHook {
         setTextSelection(TextSelection.LLM);
     };
 
-    function resetText() {
+    const resetText = () => {
         setTextSelection(TextSelection.USER);
         setLlmTextBox("");
         setUserTextBox("");
-    }
+    };
 
     const setText = (text: string) => {
         if (textSelection === TextSelection.USER) {
@@ -83,6 +80,10 @@ export function useChatForm(): ChatFormHook {
     const undo = () => {
         setTextSelection(TextSelection.USER);
     };
+
+    // We don't want the inputs to be populated when the role changes
+    // In the real app we wouldn't need this because there would be no role switching
+    useEffect(resetText, [role]);
 
     return {
         append,

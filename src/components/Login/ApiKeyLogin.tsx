@@ -18,10 +18,12 @@ export default function ApiKeyLogin({
             <Select
                 allowDeselect={false}
                 data={Object.values(LlmProviderName)}
-                defaultValue={apiProviderName}
                 disabled={isLoading}
                 label="Provider"
-                onChange={editApiProviderName}
+                onChange={(value) =>
+                    editApiProviderName(value as LlmProviderName)
+                }
+                value={apiProviderName}
             />
             <PasswordInput
                 data-autofocus
@@ -33,7 +35,7 @@ export default function ApiKeyLogin({
                 }
                 label="API Key"
                 name="apiKey"
-                onChange={editApiKey}
+                onChange={(e) => editApiKey(e.target.value)}
                 value={apiKey}
             />
             <Space h="md" />

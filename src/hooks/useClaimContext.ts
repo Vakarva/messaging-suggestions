@@ -87,7 +87,6 @@ export const useClaimContext = (
     }
 
     const buildSystemMessage = (): string => {
-        // "Static" prompts
         let promptsArray = [
             "You are a helpful insurance claims adjuster.",
             "You are aiding an injured worker and responding to any questions they have about their insurance case.",
@@ -98,8 +97,6 @@ export const useClaimContext = (
             `The current local date and time is ${new Date().toLocaleString()}.`,
         ];
 
-        // Dynamically populate additional prompts given current ClaimContext fields
-        // Example: `additionalContext` will look like: "The worker's: Claim Id is 9D2jdR; Next Appointment is 10/24/2024."
         const contextArray = Object.entries({
             claimId,
             nextAppointment,
@@ -112,13 +109,11 @@ export const useClaimContext = (
                     ClaimContextLabels[key as keyof typeof ClaimContextLabels];
                 return `${label} is ${value}`;
             });
-        // If contextArray is not empty, add to prompts
         if (contextArray.length > 0) {
             const context = `The worker's: ${contextArray.join("; ")}.`;
             promptsArray.push(context);
         }
 
-        // Join all sentence prompts into a single string
         const prompts = promptsArray.join(" ");
 
         return prompts;

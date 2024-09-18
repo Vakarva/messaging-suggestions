@@ -3,7 +3,6 @@ import { useRef, useState } from "react";
 import {
     createLlmApiClient,
     LlmApiClient,
-    LlmApiClientType,
     LlmProviderName,
 } from "@custom-types";
 
@@ -17,9 +16,9 @@ export enum ApiSessionStatus {
 export interface ApiSessionHook {
     apiKey: string;
     apiProviderName: LlmProviderName;
-    editApiKey: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    editApiProviderName: (value: string | null) => void;
-    client: LlmApiClient<LlmApiClientType>;
+    editApiKey: (newApiKey: string) => void;
+    editApiProviderName: (newApiProviderName: LlmProviderName) => void;
+    client: LlmApiClient;
     logout: () => void;
     status: ApiSessionStatus;
     validateApiKey: () => Promise<void>;
@@ -34,15 +33,15 @@ export function useApiSession(): ApiSessionHook {
 
     const clientRef = useRef(createLlmApiClient(apiProviderName, apiKey));
 
-    const editApiKey = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setApiKey(e.target.value);
+    const editApiKey = (newApiKey: string) => {
+        setApiKey(newApiKey);
         if (status === ApiSessionStatus.ERROR) {
             setStatus(ApiSessionStatus.IDLE);
         }
     };
 
-    const editApiProviderName = (value: string | null) => {
-        setApiProviderName(value as LlmProviderName);
+    const editApiProviderName = (newApiProviderName: LlmProviderName) => {
+        setApiProviderName(newApiProviderName);
         if (status === ApiSessionStatus.ERROR) {
             setStatus(ApiSessionStatus.IDLE);
         }
@@ -57,8 +56,13 @@ export function useApiSession(): ApiSessionHook {
         setStatus(ApiSessionStatus.LOADING);
         clientRef.current = createLlmApiClient(apiProviderName, apiKey);
 
-        const isValid = await clientRef.current.isApiKeyValid();
-        setStatus(isValid ? ApiSessionStatus.SUCCESS : ApiSessionStatus.ERROR);
+        try {
+            await clientRef.current.validateApiKey();
+            setStatus(ApiSessionStatus.SUCCESS);
+        } catch (error) {
+            console.error(error);
+            setStatus(ApiSessionStatus.ERROR);
+        }
     };
 
     return {

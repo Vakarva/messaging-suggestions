@@ -1,4 +1,4 @@
-// Simple types
+/* Simple types */
 export enum Role {
     assistant = "assistant",
     user = "user",
@@ -10,7 +10,7 @@ export interface Message {
     role: Role;
 }
 
-// LLM API Client classes
+/* LLM API Client Objects */
 import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
 
@@ -19,24 +19,17 @@ export enum LlmProviderName {
     openAi = "OpenAI",
 }
 
-export type LlmApiClientType = Anthropic | OpenAI;
+export interface LlmApiClient {
+    getAvailableModels: () => string[];
+    getDefaultModelName: () => string;
 
-export abstract class LlmApiClient<TClient extends LlmApiClientType> {
-    protected instance: TClient;
-
-    constructor(instance: TClient) {
-        this.instance = instance;
-    }
-
-    abstract get defaultModelName(): string;
-    abstract get availableModels(): string[];
-
-    abstract isApiKeyValid(): Promise<boolean>;
-    abstract getStream(
+    getStream: (
         prompt: string,
         messages: Message[],
         model: string
-    ): Promise<AsyncIterable<string>>;
+    ) => Promise<AsyncGenerator<string>>;
+
+    validateApiKey: () => Promise<void>;
 }
 
 interface AnthropicMessage {
@@ -44,65 +37,48 @@ interface AnthropicMessage {
     content: string;
 }
 
-class AnthropicApiClient extends LlmApiClient<Anthropic> {
-    constructor(apiKey: string) {
-        const anthropicInstance = new Anthropic({
-            apiKey: apiKey,
-            dangerouslyAllowBrowser: true,
-        });
-        super(anthropicInstance);
-    }
-
-    get availableModels(): string[] {
-        return ["claude-3-opus-20240229", "claude-3-5-sonnet-20240620"];
-    }
-
-    get defaultModelName(): string {
-        return this.availableModels[0];
-    }
-
-    async isApiKeyValid(): Promise<boolean> {
-        try {
-            await this.instance.messages.create({
-                model: this.defaultModelName,
-                max_tokens: 1,
-                messages: [{ role: "user", content: "Test" }],
-            });
-            return true;
-        } catch (error) {
-            console.error("Error validating Anthropic API key:", error);
-            return false;
-        }
-    }
+function AnthropicApiClient(apiKey: string): LlmApiClient {
+    const anthropic = new Anthropic({
+        apiKey: apiKey,
+        dangerouslyAllowBrowser: true,
+    });
+    const _availableModels = [
+        "claude-3-opus-20240229",
+        "claude-3-5-sonnet-20240620",
+    ];
+    const _defaultModelName = _availableModels[0];
 
     // Anthropic requires messages to alternate between user and assistant
-    protected mergedAndFormattedMessages(
-        messages: Message[]
-    ): AnthropicMessage[] {
+    const _mergedAndFormatted = (messages: Message[]): AnthropicMessage[] => {
         return messages.reduce<AnthropicMessage[]>((acc, message, index) => {
             if (index === 0) {
-                acc.push({ role: message.role, content: message.content });
+                acc.push({
+                    role: message.role,
+                    content: message.content,
+                });
             } else {
                 const prevMessage = acc[acc.length - 1];
 
                 if (prevMessage.role === message.role) {
                     prevMessage.content += `\n${message.content}`;
                 } else {
-                    acc.push({ role: message.role, content: message.content });
+                    acc.push({
+                        role: message.role,
+                        content: message.content,
+                    });
                 }
             }
             return acc;
         }, []);
-    }
+    };
 
-    async getStream(
+    const getStream = async (
         prompt: string,
         messages: Message[],
         model: string
-    ): Promise<AsyncIterable<string>> {
-        const mergedAndFormattedMessages =
-            this.mergedAndFormattedMessages(messages);
-        const stream = await this.instance.messages.stream({
+    ): Promise<AsyncGenerator<string>> => {
+        const mergedAndFormattedMessages = _mergedAndFormatted(messages);
+        const stream = await anthropic.messages.stream({
             system: prompt,
             messages: mergedAndFormattedMessages,
             model: model,
@@ -110,6 +86,7 @@ class AnthropicApiClient extends LlmApiClient<Anthropic> {
             stream: true,
         });
 
+        // Need to pass an AsyncGenerator because it must be coupled with a "place" to write the content
         async function* streamGenerator(): AsyncGenerator<string> {
             for await (const event of stream) {
                 if (
@@ -122,7 +99,26 @@ class AnthropicApiClient extends LlmApiClient<Anthropic> {
         }
 
         return streamGenerator();
-    }
+    };
+
+    const validateApiKey = async (): Promise<void> => {
+        try {
+            await anthropic.messages.create({
+                model: _defaultModelName,
+                max_tokens: 1,
+                messages: [{ role: "user", content: "Test" }],
+            });
+        } catch (error) {
+            throw new Error(`Error validating Anthropic API key: ${error}`);
+        }
+    };
+
+    return {
+        getAvailableModels: () => _availableModels,
+        getDefaultModelName: () => _defaultModelName,
+        getStream,
+        validateApiKey,
+    };
 }
 
 interface OpenAiMessage {
@@ -130,37 +126,18 @@ interface OpenAiMessage {
     content: string;
 }
 
-class OpenAiApiClient extends LlmApiClient<OpenAI> {
-    constructor(apiKey: string) {
-        const openAiInstance = new OpenAI({
-            apiKey: apiKey,
-            dangerouslyAllowBrowser: true,
-        });
-        super(openAiInstance);
-    }
+function OpenAiApiClient(apiKey: string): LlmApiClient {
+    const openai = new OpenAI({
+        apiKey: apiKey,
+        dangerouslyAllowBrowser: true,
+    });
+    const _availableModels = ["gpt-4o-mini", "gpt-4o"];
+    const _defaultModelName = _availableModels[0];
 
-    get availableModels(): string[] {
-        return ["gpt-4o-mini", "gpt-4o"];
-    }
-
-    get defaultModelName(): string {
-        return this.availableModels[0];
-    }
-
-    async isApiKeyValid(): Promise<boolean> {
-        try {
-            await this.instance.models.list();
-            return true;
-        } catch (error) {
-            console.error("Error validating OpenAI API key:", error);
-            return false;
-        }
-    }
-
-    private formattedMessages(
+    const _formatted = (
         prompt: string,
         messages: Message[]
-    ): OpenAiMessage[] {
+    ): OpenAiMessage[] => {
         const systemMessage = {
             role: "system",
             content: prompt,
@@ -170,22 +147,21 @@ class OpenAiApiClient extends LlmApiClient<OpenAI> {
             systemMessage,
             ...messages.map(({ role, content }) => ({ role, content })),
         ];
-    }
+    };
 
-    async getStream(
+    const getStream = async (
         prompt: string,
         messages: Message[],
         model: string
-    ): Promise<AsyncIterable<string>> {
-        const formattedMessages = this.formattedMessages(prompt, messages);
+    ): Promise<AsyncGenerator<string>> => {
+        const formattedMessages = _formatted(prompt, messages);
 
-        const stream = await this.instance.chat.completions.create({
+        const stream = await openai.chat.completions.create({
             model: model,
             messages: formattedMessages,
             stream: true,
         });
 
-        // Wrap the stream to extract the content
         async function* streamGenerator(): AsyncGenerator<string> {
             for await (const chunk of stream) {
                 const content = chunk.choices[0]?.delta?.content;
@@ -196,17 +172,32 @@ class OpenAiApiClient extends LlmApiClient<OpenAI> {
         }
 
         return streamGenerator();
-    }
+    };
+
+    const validateApiKey = async (): Promise<void> => {
+        try {
+            await openai.models.list();
+        } catch (error) {
+            throw new Error(`Error validating OpenAI API key: ${error}`);
+        }
+    };
+
+    return {
+        getAvailableModels: () => _availableModels,
+        getDefaultModelName: () => _defaultModelName,
+        getStream,
+        validateApiKey,
+    };
 }
 
 export function createLlmApiClient(
     providerName: LlmProviderName,
     apiKey: string
-): LlmApiClient<LlmApiClientType> {
+): LlmApiClient {
     switch (providerName) {
         case LlmProviderName.anthropic:
-            return new AnthropicApiClient(apiKey);
+            return AnthropicApiClient(apiKey);
         case LlmProviderName.openAi:
-            return new OpenAiApiClient(apiKey);
+            return OpenAiApiClient(apiKey);
     }
 }

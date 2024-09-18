@@ -10,16 +10,16 @@ export interface LlmHook {
 export function useLlm(): LlmHook {
     const apiSession = useApiSession();
     const [modelName, setModelName] = useState<string>(
-        apiSession.client.defaultModelName
+        apiSession.client.getDefaultModelName()
     );
 
     useEffect(() => {
         if (
-            !apiSession.client.availableModels.find(
-                (model) => model === modelName
-            )
+            !apiSession.client
+                .getAvailableModels()
+                .find((model) => model === modelName)
         ) {
-            setModelName(apiSession.client.defaultModelName);
+            setModelName(apiSession.client.getDefaultModelName());
         }
     }, [apiSession.client]);
 

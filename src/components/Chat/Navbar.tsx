@@ -40,16 +40,18 @@ function NavbarLink({ icon: Icon, isMobile, label, onClick }: NavbarLinkProps) {
             <Button
                 className={classes.navbarLink}
                 display="flex"
-                h="100%"
+                h={50}
                 onClick={onClick}
-                p="md"
+                p="sm"
                 radius="md"
                 variant="subtle"
                 w={isMobile ? "100%" : undefined}
             >
                 <Icon
-                    style={{ width: rem(20), height: rem(20) }}
+                    // style={{ width: rem(20), height: rem(20) }}
+                    // style={{ width: "100%" }}
                     stroke={1.5}
+                    size="100%"
                 />
                 {isMobile && <Text ml="sm">{label}</Text>}
             </Button>

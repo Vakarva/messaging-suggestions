@@ -33,7 +33,7 @@ export function useChat(): ChatHook {
     const llm = useLlm();
     const claimContext = useClaimContext({});
     const form = useChatForm();
-    const [isLoadingStream, setIsLoadingStream] = useState(false); // consider making a custom hook for purely UI state?
+    const [isLoadingStream, setIsLoadingStream] = useState(false);
 
     const streamLlmResponse = async (): Promise<void> => {
         setIsLoadingStream(true);

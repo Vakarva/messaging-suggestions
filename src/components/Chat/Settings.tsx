@@ -69,7 +69,7 @@ export default function Settings({ close, chat }: SettingsProps) {
             <Fieldset legend="LLM Behavior">
                 <Select
                     allowDeselect={false}
-                    data={chat.llm.apiSession.client.availableModels}
+                    data={chat.llm.apiSession.client.getAvailableModels()}
                     label="Model"
                     onChange={(value) => setDraftModelName(value!)}
                     value={draftModelName}
