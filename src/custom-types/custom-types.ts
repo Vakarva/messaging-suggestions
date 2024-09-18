@@ -78,27 +78,31 @@ function AnthropicApiClient(apiKey: string): LlmApiClient {
         model: string
     ): Promise<AsyncGenerator<string>> => {
         const mergedAndFormattedMessages = _mergedAndFormatted(messages);
-        const stream = await anthropic.messages.stream({
-            system: prompt,
-            messages: mergedAndFormattedMessages,
-            model: model,
-            max_tokens: 512,
-            stream: true,
-        });
 
-        // Need to pass an AsyncGenerator because it must be coupled with a "place" to write the content
-        async function* streamGenerator(): AsyncGenerator<string> {
-            for await (const event of stream) {
-                if (
-                    event.type === "content_block_delta" &&
-                    event.delta.type === "text_delta"
-                ) {
-                    yield event.delta.text;
+        try {
+            const stream = await anthropic.messages.stream({
+                system: prompt,
+                messages: mergedAndFormattedMessages,
+                model: model,
+                max_tokens: 512,
+                stream: true,
+            });
+
+            // Need to pass an AsyncGenerator because it must be coupled with a "place" to write the content
+            async function* streamGenerator(): AsyncGenerator<string> {
+                for await (const event of stream) {
+                    if (
+                        event.type === "content_block_delta" &&
+                        event.delta.type === "text_delta"
+                    ) {
+                        yield event.delta.text;
+                    }
                 }
             }
+            return streamGenerator();
+        } catch (error) {
+            throw new Error("Error getting Anthropic stream", { cause: error });
         }
-
-        return streamGenerator();
     };
 
     const validateApiKey = async (): Promise<void> => {
@@ -109,7 +113,9 @@ function AnthropicApiClient(apiKey: string): LlmApiClient {
                 messages: [{ role: "user", content: "Test" }],
             });
         } catch (error) {
-            throw new Error(`Error validating Anthropic API key: ${error}`);
+            throw new Error("Error validating Anthropic API key", {
+                cause: error,
+            });
         }
     };
 
@@ -156,29 +162,35 @@ function OpenAiApiClient(apiKey: string): LlmApiClient {
     ): Promise<AsyncGenerator<string>> => {
         const formattedMessages = _formatted(prompt, messages);
 
-        const stream = await openai.chat.completions.create({
-            model: model,
-            messages: formattedMessages,
-            stream: true,
-        });
+        try {
+            const stream = await openai.chat.completions.create({
+                model: model,
+                messages: formattedMessages,
+                stream: true,
+            });
 
-        async function* streamGenerator(): AsyncGenerator<string> {
-            for await (const chunk of stream) {
-                const content = chunk.choices[0]?.delta?.content;
-                if (content) {
-                    yield content;
+            async function* streamGenerator(): AsyncGenerator<string> {
+                for await (const chunk of stream) {
+                    const content = chunk.choices[0]?.delta?.content;
+                    if (content) {
+                        yield content;
+                    }
                 }
             }
-        }
 
-        return streamGenerator();
+            return streamGenerator();
+        } catch (error) {
+            throw new Error("Error getting OpenAI stream", { cause: error });
+        }
     };
 
     const validateApiKey = async (): Promise<void> => {
         try {
             await openai.models.list();
         } catch (error) {
-            throw new Error(`Error validating OpenAI API key: ${error}`);
+            throw new Error("Error validating OpenAI API key", {
+                cause: error,
+            });
         }
     };
 
