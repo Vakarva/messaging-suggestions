@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { NumberFormatValues, SourceInfo } from "react-number-format";
 
 export interface ClaimContext {
     claimId: string;
@@ -9,84 +8,37 @@ export interface ClaimContext {
 }
 
 export interface ClaimContextHook {
-    buildSystemMessage: () => string;
+    buildPrompt: () => string;
     claimId: string;
-    handleNumberInputChange: (
-        values: NumberFormatValues,
-        sourceInfo: SourceInfo
-    ) => void;
-    handleTextInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     nextAppointment: string;
     nextPaymentAmount: string;
     nextPaymentDate: string;
-    setClaimContext: (claimContext: ClaimContext) => void;
+    set: (claimContext: ClaimContext) => void;
+    update: (name: string, value: string) => void;
 }
 
 export const useClaimContext = (
     claimContext: Partial<ClaimContext> = {}
 ): ClaimContextHook => {
-    const [claimId, setClaimId] = useState<string>(claimContext.claimId || "");
-    const [nextAppointment, setNextAppointment] = useState<string>(
+    const [claimId, _setClaimId] = useState<string>(claimContext.claimId || "");
+    const [nextAppointment, _setNextAppointment] = useState<string>(
         claimContext.nextAppointment || ""
     );
-    const [nextPaymentAmount, setNextPaymentAmount] = useState<string>(
+    const [nextPaymentAmount, _setNextPaymentAmount] = useState<string>(
         claimContext.nextPaymentAmount || ""
     );
-    const [nextPaymentDate, setNextPaymentDate] = useState<string>(
+    const [nextPaymentDate, _setNextPaymentDate] = useState<string>(
         claimContext.nextPaymentDate || ""
     );
 
-    const handleNumberInputChange = (
-        values: NumberFormatValues,
-        sourceInfo: SourceInfo
-    ) => {
-        const target = sourceInfo.event?.target as HTMLInputElement; // TS can't infer target type
-
-        switch (target.name) {
-            case "nextPaymentAmount":
-                setNextPaymentAmount(values.formattedValue);
-                break;
-            default:
-                break;
-        }
-    };
-
-    const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-
-        switch (name) {
-            case "claimId":
-                setClaimId(value);
-                break;
-            case "nextAppointment":
-                setNextAppointment(value);
-                break;
-            case "nextPaymentDate":
-                setNextPaymentDate(value);
-                break;
-        }
-    };
-
-    const setClaimContext = ({
-        claimId,
-        nextAppointment,
-        nextPaymentAmount,
-        nextPaymentDate,
-    }: ClaimContext) => {
-        setClaimId(claimId);
-        setNextAppointment(nextAppointment);
-        setNextPaymentAmount(nextPaymentAmount);
-        setNextPaymentDate(nextPaymentDate);
-    };
-
-    enum ClaimContextLabels {
+    enum _ClaimContextLabels {
         claimId = "Claim ID",
         nextAppointment = "Next appointment",
         nextPaymentAmount = "Next payment amount",
         nextPaymentDate = "Next payment date",
     }
 
-    const buildSystemMessage = (): string => {
+    const buildPrompt = (): string => {
         let promptsArray = [
             "You are a helpful insurance claims adjuster.",
             "You are aiding an injured worker and responding to any questions they have about their insurance case.",
@@ -106,7 +58,9 @@ export const useClaimContext = (
             .filter(([, value]) => value)
             .map(([key, value]) => {
                 const label =
-                    ClaimContextLabels[key as keyof typeof ClaimContextLabels];
+                    _ClaimContextLabels[
+                        key as keyof typeof _ClaimContextLabels
+                    ];
                 return `${label} is ${value}`;
             });
         if (contextArray.length > 0) {
@@ -119,14 +73,42 @@ export const useClaimContext = (
         return prompts;
     };
 
-    return {
+    const update = (name: string, value: string) => {
+        switch (name) {
+            case "claimId":
+                _setClaimId(value);
+                break;
+            case "nextAppointment":
+                _setNextAppointment(value);
+                break;
+            case "nextPaymentAmount":
+                _setNextPaymentAmount(value);
+                break;
+            case "nextPaymentDate":
+                _setNextPaymentDate(value);
+                break;
+        }
+    };
+
+    const set = ({
         claimId,
         nextAppointment,
         nextPaymentAmount,
         nextPaymentDate,
-        handleNumberInputChange,
-        handleTextInputChange,
-        setClaimContext,
-        buildSystemMessage,
+    }: ClaimContext) => {
+        _setClaimId(claimId);
+        _setNextAppointment(nextAppointment);
+        _setNextPaymentAmount(nextPaymentAmount);
+        _setNextPaymentDate(nextPaymentDate);
+    };
+
+    return {
+        buildPrompt,
+        claimId,
+        nextAppointment,
+        nextPaymentAmount,
+        nextPaymentDate,
+        set,
+        update,
     };
 };

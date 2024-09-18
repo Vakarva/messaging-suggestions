@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Message, Role } from "@custom-types";
 
@@ -9,10 +9,10 @@ export interface MessagesHook {
 }
 
 export function useMessages(): MessagesHook {
-    const [data, setData] = useState<Message[]>([]);
+    const [data, _setData] = useState<Message[]>([]);
 
     const append = (content: string, role: Role) => {
-        setData((oldData) => [
+        _setData((oldData) => [
             ...oldData,
             { content, createdAt: new Date(), role },
         ]);

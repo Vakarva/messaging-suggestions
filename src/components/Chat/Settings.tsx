@@ -7,6 +7,7 @@ import {
     Stack,
     TextInput,
 } from "@mantine/core";
+import { NumberFormatValues, SourceInfo } from "react-number-format";
 
 import { useClaimContext } from "@hooks/useClaimContext";
 import { ChatHook } from "@hooks/useChat";
@@ -18,9 +19,20 @@ interface SettingsProps {
 
 export default function Settings({ close, chat }: SettingsProps) {
     const draftClaimContext = useClaimContext(chat.claimContext);
-    const [draftModelName, setDraftModelName] = useState<string>(
-        chat.llm.modelName
-    );
+    const [draftModelName, setDraftModelName] = useState<string>(chat.llm.name);
+
+    const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        draftClaimContext.update(name, value);
+    };
+
+    const handleNumberChange = (
+        values: NumberFormatValues,
+        sourceInfo: SourceInfo
+    ) => {
+        const target = sourceInfo.event?.target as HTMLInputElement; // TS needs help inferring target's type
+        draftClaimContext.update(target.name, values.formattedValue);
+    };
 
     return (
         <Stack>
@@ -29,7 +41,7 @@ export default function Settings({ close, chat }: SettingsProps) {
                     <TextInput
                         label="Claim ID"
                         name="claimId"
-                        onChange={draftClaimContext.handleTextInputChange}
+                        onChange={handleTextChange}
                         placeholder="Claim ID"
                         type="text"
                         value={draftClaimContext.claimId}
@@ -37,7 +49,7 @@ export default function Settings({ close, chat }: SettingsProps) {
                     <TextInput
                         label="Next appointment"
                         name="nextAppointment"
-                        onChange={draftClaimContext.handleTextInputChange}
+                        onChange={handleTextChange}
                         type="date"
                         value={draftClaimContext.nextAppointment}
                     />
@@ -46,9 +58,7 @@ export default function Settings({ close, chat }: SettingsProps) {
                         clampBehavior="strict"
                         hideControls
                         label="Next payment amount"
-                        onValueChange={
-                            draftClaimContext.handleNumberInputChange
-                        }
+                        onValueChange={handleNumberChange}
                         min={0}
                         name="nextPaymentAmount"
                         placeholder="$0.00"
@@ -60,7 +70,7 @@ export default function Settings({ close, chat }: SettingsProps) {
                     <TextInput
                         label="Next payment date"
                         name="nextPaymentDate"
-                        onChange={draftClaimContext.handleTextInputChange}
+                        onChange={handleTextChange}
                         type="date"
                         value={draftClaimContext.nextPaymentDate}
                     />

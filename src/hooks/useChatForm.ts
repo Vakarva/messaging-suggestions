@@ -28,47 +28,48 @@ export interface ChatFormHook {
 
 export function useChatForm(): ChatFormHook {
     const [role, setRole] = useState<Role>(Role.user);
-    const [userTextBox, setUserTextBox] = useState("");
+    const [_userTextBox, _setUserTextBox] = useState("");
     const messages = useMessages();
-    const [llmTextBox, setLlmTextBox] = useState("");
-    const [textSelection, setTextSelection] = useState(TextSelection.USER);
+    const [_llmTextBox, _setLlmTextBox] = useState("");
+    const [_textSelection, _setTextSelection] = useState(TextSelection.USER);
 
     const text =
-        textSelection === TextSelection.USER ? userTextBox : llmTextBox;
+        _textSelection === TextSelection.USER ? _userTextBox : _llmTextBox;
     const isEmpty = text.trim() === "";
-    const isUndoDisabled = !llmTextBox || textSelection === TextSelection.USER;
-    const isRedoDisabled = !llmTextBox || textSelection === TextSelection.LLM;
+    const isRedoDisabled = !_llmTextBox || _textSelection === TextSelection.LLM;
+    const isUndoDisabled =
+        !_llmTextBox || _textSelection === TextSelection.USER;
 
     const append = (text: string) => {
-        setLlmTextBox((oldValue) => oldValue + text);
+        _setLlmTextBox((oldValue) => oldValue + text);
     };
 
     const initialize = () => {
-        setLlmTextBox(""); // clear suggestion text
-        setTextSelection(TextSelection.LLM); // select LLM's suggested text
+        _setLlmTextBox(""); // clear suggestion text
+        _setTextSelection(TextSelection.LLM); // select LLM's suggested text
     };
 
     const redo = () => {
-        setTextSelection(TextSelection.LLM);
+        _setTextSelection(TextSelection.LLM);
     };
 
-    const resetText = () => {
-        setTextSelection(TextSelection.USER);
-        setLlmTextBox("");
-        setUserTextBox("");
+    const _resetText = () => {
+        _setTextSelection(TextSelection.USER);
+        _setLlmTextBox("");
+        _setUserTextBox("");
     };
 
     const setText = (text: string) => {
-        if (textSelection === TextSelection.USER) {
-            setUserTextBox(text);
+        if (_textSelection === TextSelection.USER) {
+            _setUserTextBox(text);
         } else {
-            setLlmTextBox(text);
+            _setLlmTextBox(text);
         }
     };
 
     const submit = () => {
         messages.append(text.trim(), role);
-        resetText();
+        _resetText();
     };
 
     const toggleRole = () => {
@@ -78,12 +79,12 @@ export function useChatForm(): ChatFormHook {
     };
 
     const undo = () => {
-        setTextSelection(TextSelection.USER);
+        _setTextSelection(TextSelection.USER);
     };
 
     // We don't want the inputs to be populated when the role changes
     // In the real app we wouldn't need this because there would be no role switching
-    useEffect(resetText, [role]);
+    useEffect(_resetText, [role]);
 
     return {
         append,

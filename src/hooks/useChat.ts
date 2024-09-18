@@ -1,18 +1,14 @@
 import { useState } from "react";
 
+import { Message } from "@custom-types";
+
 import {
     ClaimContext,
     ClaimContextHook,
     useClaimContext,
 } from "@hooks/useClaimContext";
-
 import { LlmHook, useLlm } from "@hooks/useLlm";
 import { ChatFormHook, useChatForm } from "@hooks/useChatForm";
-
-export interface OutputHandler {
-    initialize: () => void;
-    append: (text: string) => void;
-}
 
 export interface ChatHook {
     claimContext: ClaimContextHook;
@@ -31,18 +27,22 @@ export interface ChatHook {
 
 export function useChat(): ChatHook {
     const llm = useLlm();
-    const claimContext = useClaimContext({});
+    const claimContext = useClaimContext();
     const form = useChatForm();
-    const [isLoadingStream, setIsLoadingStream] = useState(false);
+    const [isLoadingStream, _setIsLoadingStream] = useState(false);
+
+    const messages: Message[] = JSON.parse(
+        localStorage.getItem("messages") ?? "[]"
+    );
 
     const streamLlmResponse = async (): Promise<void> => {
-        setIsLoadingStream(true);
-        const prompt = claimContext.buildSystemMessage();
+        _setIsLoadingStream(true);
+        const prompt = claimContext.buildPrompt();
         try {
             const stream = await llm.apiSession.client.getStream(
                 prompt,
                 form.messages.data,
-                llm.modelName
+                llm.name
             );
             form.initialize();
             for await (const chunk of stream) {
@@ -51,7 +51,7 @@ export function useChat(): ChatHook {
         } catch (error) {
             console.error("Error streaming LLM response:", error);
         } finally {
-            setIsLoadingStream(false);
+            _setIsLoadingStream(false);
         }
     };
 
@@ -63,10 +63,10 @@ export function useChat(): ChatHook {
         newLlmModelName: string;
     }>) => {
         if (newClaimContext) {
-            claimContext.setClaimContext(newClaimContext);
+            claimContext.set(newClaimContext);
         }
         if (newLlmModelName) {
-            llm.setModelName(newLlmModelName);
+            llm.setName(newLlmModelName);
         }
     };
 

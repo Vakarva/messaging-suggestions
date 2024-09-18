@@ -1,5 +1,5 @@
 import { Button, Select, PasswordInput, Space } from "@mantine/core";
-
+import { getHotkeyHandler } from "@mantine/hooks";
 import { LlmProviderName } from "@custom-types";
 import { ApiSessionHook, ApiSessionStatus } from "@hooks/useApiSession";
 
@@ -36,6 +36,7 @@ export default function ApiKeyLogin({
                 label="API Key"
                 name="apiKey"
                 onChange={(e) => editApiKey(e.target.value)}
+                onKeyDown={getHotkeyHandler([["Enter", validateApiKey]])}
                 value={apiKey}
             />
             <Space h="md" />

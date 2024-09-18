@@ -87,8 +87,7 @@ function AnthropicApiClient(apiKey: string): LlmApiClient {
                 max_tokens: 512,
                 stream: true,
             });
-
-            // Need to pass an AsyncGenerator because it must be coupled with a "place" to write the content
+            // AsyncGenerator needed because stream must be later coupled with a write "location"
             async function* streamGenerator(): AsyncGenerator<string> {
                 for await (const event of stream) {
                     if (
@@ -99,6 +98,7 @@ function AnthropicApiClient(apiKey: string): LlmApiClient {
                     }
                 }
             }
+
             return streamGenerator();
         } catch (error) {
             throw new Error("Error getting Anthropic stream", { cause: error });
