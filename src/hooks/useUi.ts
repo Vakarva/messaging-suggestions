@@ -13,6 +13,7 @@ export function useUi(): UiHook {
 
     const sendMessage = () => {
         output.append(input.text.trim(), input.role);
+        input.reset();
     };
 
     return {

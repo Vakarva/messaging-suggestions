@@ -40,9 +40,10 @@ export function useInput(): InputHook {
         _setLlmTextBox((oldValue) => oldValue + text);
     };
 
+    // Prepare input to receive LLM's response
     const initialize = () => {
-        _setLlmTextBox(""); // clear suggestion text
-        _setTextSelection(TextSelection.LLM); // select LLM's suggested text
+        _setLlmTextBox("");
+        _setTextSelection(TextSelection.LLM);
     };
 
     const redo = () => {
@@ -74,7 +75,7 @@ export function useInput(): InputHook {
     };
 
     // We don't want the inputs to be populated when the role changes
-    // In the real app we wouldn't need this because there would be no role switching
+    // In the production app we wouldn't need this because there would be no role switching
     useEffect(reset, [role]);
 
     return {

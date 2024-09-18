@@ -1,8 +1,8 @@
 import {
     Button,
     Drawer,
-    Divider,
-    rem,
+    // Divider,
+    // rem,
     Space,
     Stack,
     Text,
@@ -18,7 +18,7 @@ import {
 
 import Logo from "@components/Chat/Logo";
 import Settings from "@components/Chat/Settings";
-import { ChatHook } from "@hooks/useChat";
+import { LlmHook } from "@hooks/useLlm";
 
 import classes from "@styles/Navbar.module.css";
 
@@ -60,11 +60,11 @@ function NavbarLink({ icon: Icon, isMobile, label, onClick }: NavbarLinkProps) {
 }
 
 interface NavbarProps {
-    chat: ChatHook;
+    llm: LlmHook;
     isMobile: boolean;
 }
 
-export default function Navbar({ chat, isMobile }: NavbarProps) {
+export default function Navbar({ llm, isMobile }: NavbarProps) {
     const [isSettingsOpened, { open: openSettings, close: closeSettings }] =
         useDisclosure(false);
 
@@ -85,7 +85,7 @@ export default function Navbar({ chat, isMobile }: NavbarProps) {
                 opened={isSettingsOpened}
                 title="Settings"
             >
-                <Settings close={closeSettings} chat={chat} />
+                <Settings close={closeSettings} llm={llm} />
             </Drawer>
 
             <Stack mt={20}>
@@ -98,7 +98,7 @@ export default function Navbar({ chat, isMobile }: NavbarProps) {
                     icon={IconLogout2}
                     isMobile={isMobile}
                     label="Logout"
-                    onClick={chat.llm.apiSession.logout}
+                    onClick={llm.apiSession.logout}
                 />
             </Stack>
         </Stack>

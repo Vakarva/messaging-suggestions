@@ -70,7 +70,7 @@ export default function App() {
                         hiddenFrom="sm"
                         size="sm"
                     />
-                    <Navbar chat={chat} isMobile={isMobile} />
+                    <Navbar llm={chat.llm} isMobile={isMobile} />
                 </AppShell.Navbar>
                 <AppShell.Main>
                     <ChatHistory messages={chat.ui.output.messages} />

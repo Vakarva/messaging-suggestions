@@ -1,48 +1,45 @@
 import { useEffect, useState } from "react";
 
-import { Message } from "@custom-types";
-
 import { ApiSessionHook, useApiSession } from "@hooks/useApiSession";
-import { useClaimContext } from "@hooks/useClaimContext";
-import { useChatForm } from "@hooks/useChatForm";
+import {
+    ClaimContext,
+    ClaimContextHook,
+    useClaimContext,
+} from "@hooks/useClaimContext";
 
 export interface LlmHook {
     apiSession: ApiSessionHook;
+    context: ClaimContextHook;
     name: string;
-    setName: React.Dispatch<React.SetStateAction<string>>;
+    updateSettings: (
+        settings: Partial<{
+            newContext: ClaimContext;
+            newName: string;
+        }>
+    ) => void;
 }
 
 export function useLlm(): LlmHook {
     const apiSession = useApiSession();
+    const context = useClaimContext();
     const [name, setName] = useState<string>(
         apiSession.client.getDefaultModelName()
     );
 
-    // new stuff
-    // const context = useClaimContext();
-    // const form = useChatForm();
-    // const [isLoadingStream, _setIsLoadingStream] = useState(false);
-
-    // const streamResponse = async (messages: Message[]): Promise<void> => {
-    //     _setIsLoadingStream(true);
-    //     const prompt = context.buildPrompt();
-    //     try {
-    //         const stream = await apiSession.client.getStream(
-    //             prompt,
-    //             messages,
-    //             name
-    //         );
-    //         form.initialize();
-    //         for await (const chunk of stream) {
-    //             form.append(chunk);
-    //         }
-    //     } catch (error) {
-    //         console.error("Error streaming LLM response:", error);
-    //     } finally {
-    //         _setIsLoadingStream(false);
-    //     }
-    // };
-    // new stuff
+    const updateSettings = ({
+        newContext,
+        newName,
+    }: Partial<{
+        newContext: ClaimContext;
+        newName: string;
+    }>) => {
+        if (newContext) {
+            context.set(newContext);
+        }
+        if (newName) {
+            setName(newName);
+        }
+    };
 
     useEffect(() => {
         if (
@@ -56,7 +53,8 @@ export function useLlm(): LlmHook {
 
     return {
         apiSession,
+        context,
         name,
-        setName,
+        updateSettings,
     };
 }

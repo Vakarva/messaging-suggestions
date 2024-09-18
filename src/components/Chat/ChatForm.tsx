@@ -16,7 +16,6 @@ export default function ChatForm({ chat }: ChatFormProps) {
         e.preventDefault();
 
         chat.ui.sendMessage();
-        chat.ui.input.reset();
     };
 
     return (

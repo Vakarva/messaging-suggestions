@@ -10,16 +10,16 @@ import {
 import { NumberFormatValues, SourceInfo } from "react-number-format";
 
 import { useClaimContext } from "@hooks/useClaimContext";
-import { ChatHook } from "@hooks/useChat";
+import { LlmHook } from "@hooks/useLlm";
 
 interface SettingsProps {
-    chat: ChatHook;
+    llm: LlmHook;
     close: () => void;
 }
 
-export default function Settings({ close, chat }: SettingsProps) {
-    const draftClaimContext = useClaimContext(chat.claimContext);
-    const [draftModelName, setDraftModelName] = useState<string>(chat.llm.name);
+export default function Settings({ close, llm }: SettingsProps) {
+    const draftClaimContext = useClaimContext(llm.context);
+    const [draftModelName, setDraftModelName] = useState<string>(llm.name);
 
     const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -79,7 +79,7 @@ export default function Settings({ close, chat }: SettingsProps) {
             <Fieldset legend="LLM Behavior">
                 <Select
                     allowDeselect={false}
-                    data={chat.llm.apiSession.client.getAvailableModels()}
+                    data={llm.apiSession.client.getAvailableModels()}
                     label="Model"
                     onChange={(value) => setDraftModelName(value!)}
                     value={draftModelName}
@@ -87,9 +87,9 @@ export default function Settings({ close, chat }: SettingsProps) {
             </Fieldset>
             <Button
                 onClick={() => {
-                    chat.updateLlmSettings({
-                        newClaimContext: draftClaimContext,
-                        newLlmModelName: draftModelName,
+                    llm.updateSettings({
+                        newContext: draftClaimContext,
+                        newName: draftModelName,
                     });
                     close();
                 }}

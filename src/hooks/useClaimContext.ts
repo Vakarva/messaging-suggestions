@@ -13,22 +13,22 @@ export interface ClaimContextHook {
     nextAppointment: string;
     nextPaymentAmount: string;
     nextPaymentDate: string;
-    set: (claimContext: ClaimContext) => void;
+    set: (context: ClaimContext) => void;
     update: (name: string, value: string) => void;
 }
 
 export const useClaimContext = (
-    claimContext: Partial<ClaimContext> = {}
+    context: Partial<ClaimContext> = {}
 ): ClaimContextHook => {
-    const [claimId, _setClaimId] = useState<string>(claimContext.claimId || "");
+    const [claimId, _setClaimId] = useState<string>(context.claimId || "");
     const [nextAppointment, _setNextAppointment] = useState<string>(
-        claimContext.nextAppointment || ""
+        context.nextAppointment || ""
     );
     const [nextPaymentAmount, _setNextPaymentAmount] = useState<string>(
-        claimContext.nextPaymentAmount || ""
+        context.nextPaymentAmount || ""
     );
     const [nextPaymentDate, _setNextPaymentDate] = useState<string>(
-        claimContext.nextPaymentDate || ""
+        context.nextPaymentDate || ""
     );
 
     enum _ClaimContextLabels {
