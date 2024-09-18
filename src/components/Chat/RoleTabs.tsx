@@ -30,17 +30,17 @@ export default function RoleTabs({ chat }: RoleTabsProps) {
     };
 
     const handleTabChange = (value: string | null) => {
-        chat.form.setRole(value as Role);
+        chat.ui.input.setRole(value as Role);
     };
 
     return (
         <Stack gap="xs">
-            <Tabs value={chat.form.role} onChange={handleTabChange}>
+            <Tabs value={chat.ui.input.role} onChange={handleTabChange}>
                 <Tabs.List grow>
                     <Tabs.Tab
                         leftSection={
                             <ThemeIcon
-                                {...(chat.form.role === Role.user
+                                {...(chat.ui.input.role === Role.user
                                     ? activeTabGradient
                                     : inactiveTabGradient)}
                                 variant="gradient"
@@ -55,7 +55,7 @@ export default function RoleTabs({ chat }: RoleTabsProps) {
                     <Tabs.Tab
                         leftSection={
                             <ThemeIcon
-                                {...(chat.form.role === Role.assistant
+                                {...(chat.ui.input.role === Role.assistant
                                     ? activeTabGradient
                                     : inactiveTabGradient)}
                                 variant="gradient"

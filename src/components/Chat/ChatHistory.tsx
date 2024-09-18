@@ -7,13 +7,13 @@ import { Message, Role } from "@custom-types";
 import ChatBubble from "@components/Chat/ChatBubble";
 
 interface ChatHistoryProps {
-    messageData: Message[];
+    messages: Message[];
 }
 
-export default function ChatHistory({ messageData }: ChatHistoryProps) {
+export default function ChatHistory({ messages }: ChatHistoryProps) {
     const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>();
 
-    const messageElements = messageData.map((message) => (
+    const messageElements = messages.map((message) => (
         <Box
             key={message.createdAt.toISOString()}
             maw="85%"
@@ -26,7 +26,7 @@ export default function ChatHistory({ messageData }: ChatHistoryProps) {
 
     useEffect(() => {
         scrollIntoView();
-    }, [messageData]);
+    }, [messages]);
 
     return (
         <Stack>

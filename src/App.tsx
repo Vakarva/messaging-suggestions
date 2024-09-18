@@ -73,7 +73,7 @@ export default function App() {
                     <Navbar chat={chat} isMobile={isMobile} />
                 </AppShell.Navbar>
                 <AppShell.Main>
-                    <ChatHistory messageData={chat.form.messages.data} />
+                    <ChatHistory messages={chat.ui.output.messages} />
                 </AppShell.Main>
                 <AppShell.Footer bg={theme.colors.gray[0]} p="md">
                     <RoleTabs chat={chat} />

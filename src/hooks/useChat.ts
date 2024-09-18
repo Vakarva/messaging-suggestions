@@ -1,18 +1,16 @@
 import { useState } from "react";
 
-import { Message } from "@custom-types";
-
 import {
     ClaimContext,
     ClaimContextHook,
     useClaimContext,
 } from "@hooks/useClaimContext";
 import { LlmHook, useLlm } from "@hooks/useLlm";
-import { ChatFormHook, useChatForm } from "@hooks/useChatForm";
+import { UiHook, useUi } from "@hooks/useUi";
 
 export interface ChatHook {
     claimContext: ClaimContextHook;
-    form: ChatFormHook;
+    ui: UiHook;
     llm: LlmHook;
     isLoadingStream: boolean;
     streamLlmResponse: () => Promise<void>;
@@ -28,12 +26,8 @@ export interface ChatHook {
 export function useChat(): ChatHook {
     const llm = useLlm();
     const claimContext = useClaimContext();
-    const form = useChatForm();
+    const ui = useUi();
     const [isLoadingStream, _setIsLoadingStream] = useState(false);
-
-    const messages: Message[] = JSON.parse(
-        localStorage.getItem("messages") ?? "[]"
-    );
 
     const streamLlmResponse = async (): Promise<void> => {
         _setIsLoadingStream(true);
@@ -41,12 +35,12 @@ export function useChat(): ChatHook {
         try {
             const stream = await llm.apiSession.client.getStream(
                 prompt,
-                form.messages.data,
+                ui.output.messages,
                 llm.name
             );
-            form.initialize();
+            ui.input.initialize();
             for await (const chunk of stream) {
-                form.append(chunk);
+                ui.input.append(chunk);
             }
         } catch (error) {
             console.error("Error streaming LLM response:", error);
@@ -72,7 +66,7 @@ export function useChat(): ChatHook {
 
     return {
         claimContext,
-        form,
+        ui,
         llm,
         isLoadingStream,
         streamLlmResponse,

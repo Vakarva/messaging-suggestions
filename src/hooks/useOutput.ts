@@ -2,30 +2,36 @@ import { useEffect, useState } from "react";
 
 import { Message, Role } from "@custom-types";
 
-export interface MessagesHook {
+export interface OutputHook {
     append: (content: string, role: Role) => void;
-    data: Message[];
+    messages: Message[];
     isSuggestionDisabled: boolean;
 }
 
-export function useMessages(): MessagesHook {
-    const [data, _setData] = useState<Message[]>([]);
+export function useOutput(): OutputHook {
+    const [messages, _setMessages] = useState<Message[]>(() =>
+        JSON.parse(localStorage.getItem("messages") ?? "[]")
+    );
 
     const append = (content: string, role: Role) => {
-        _setData((oldData) => [
-            ...oldData,
+        _setMessages((oldMessage) => [
+            ...oldMessage,
             { content, createdAt: new Date(), role },
         ]);
     };
 
     const isSuggestionDisabled = (() => {
-        const mostRecentRole = data.at(-1)?.role;
+        const mostRecentRole = messages.at(-1)?.role;
         return mostRecentRole !== Role.user;
     })();
 
+    useEffect(() => {
+        localStorage.setItem("messages", JSON.stringify(messages));
+    }, [messages]);
+
     return {
         append,
-        data,
+        messages,
         isSuggestionDisabled,
     };
 }

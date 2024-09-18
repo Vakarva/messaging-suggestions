@@ -56,14 +56,14 @@ export default function AiActionPanel({ chat }: AiActionPanelProps) {
         {
             icon: IconArrowBackUp,
             label: "Undo suggestion",
-            disabled: chat.form.isUndoDisabled,
-            onClick: chat.form.undo,
+            disabled: chat.ui.input.isUndoDisabled,
+            onClick: chat.ui.input.undo,
         },
         {
             icon: IconArrowForwardUp,
             label: "Redo suggestion",
-            disabled: chat.form.isRedoDisabled,
-            onClick: chat.form.redo,
+            disabled: chat.ui.input.isRedoDisabled,
+            onClick: chat.ui.input.redo,
         },
     ];
     const controlButtons = controlItems.map((item) => (
@@ -87,7 +87,7 @@ export default function AiActionPanel({ chat }: AiActionPanelProps) {
             >
                 <ActionIcon
                     color="violet"
-                    disabled={chat.form.messages.isSuggestionDisabled}
+                    disabled={chat.ui.output.isSuggestionDisabled}
                     loading={chat.isLoadingStream}
                     onClick={chat.streamLlmResponse}
                     radius="xl"

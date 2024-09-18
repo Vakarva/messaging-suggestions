@@ -2,34 +2,30 @@ import { useEffect, useState } from "react";
 
 import { Role } from "@custom-types";
 
-import { MessagesHook, useMessages } from "@hooks/useMessages";
-
 enum TextSelection {
     USER,
     LLM,
 }
 
-export interface ChatFormHook {
+export interface InputHook {
     append: (text: string) => void;
     initialize: () => void;
     isEmpty: boolean;
     isRedoDisabled: boolean;
     isUndoDisabled: boolean;
-    messages: MessagesHook;
     redo: () => void;
+    reset: () => void;
     role: Role;
     setRole: (role: Role) => void;
     setText: (text: string) => void;
-    submit: () => void;
     text: string;
     toggleRole: () => void;
     undo: () => void;
 }
 
-export function useChatForm(): ChatFormHook {
+export function useInput(): InputHook {
     const [role, setRole] = useState<Role>(Role.user);
     const [_userTextBox, _setUserTextBox] = useState("");
-    const messages = useMessages();
     const [_llmTextBox, _setLlmTextBox] = useState("");
     const [_textSelection, _setTextSelection] = useState(TextSelection.USER);
 
@@ -53,7 +49,7 @@ export function useChatForm(): ChatFormHook {
         _setTextSelection(TextSelection.LLM);
     };
 
-    const _resetText = () => {
+    const reset = () => {
         _setTextSelection(TextSelection.USER);
         _setLlmTextBox("");
         _setUserTextBox("");
@@ -65,11 +61,6 @@ export function useChatForm(): ChatFormHook {
         } else {
             _setLlmTextBox(text);
         }
-    };
-
-    const submit = () => {
-        messages.append(text.trim(), role);
-        _resetText();
     };
 
     const toggleRole = () => {
@@ -84,7 +75,7 @@ export function useChatForm(): ChatFormHook {
 
     // We don't want the inputs to be populated when the role changes
     // In the real app we wouldn't need this because there would be no role switching
-    useEffect(_resetText, [role]);
+    useEffect(reset, [role]);
 
     return {
         append,
@@ -92,12 +83,11 @@ export function useChatForm(): ChatFormHook {
         isEmpty,
         isRedoDisabled,
         isUndoDisabled,
-        messages,
         redo,
+        reset,
         role,
         setRole,
         setText,
-        submit,
         text,
         toggleRole,
         undo,
