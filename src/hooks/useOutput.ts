@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Message, Role } from "@custom-types";
 
@@ -9,9 +9,7 @@ export interface OutputHook {
 }
 
 export function useOutput(): OutputHook {
-    const [messages, _setMessages] = useState<Message[]>(() =>
-        JSON.parse(localStorage.getItem("messages") ?? "[]")
-    );
+    const [messages, _setMessages] = useState<Message[]>([]);
 
     const append = (content: string, role: Role) => {
         _setMessages((oldMessage) => [
@@ -24,10 +22,6 @@ export function useOutput(): OutputHook {
         const mostRecentRole = messages.at(-1)?.role;
         return mostRecentRole !== Role.user;
     })();
-
-    useEffect(() => {
-        localStorage.setItem("messages", JSON.stringify(messages));
-    }, [messages]);
 
     return {
         append,

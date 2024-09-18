@@ -1,9 +1,16 @@
-import { AppShell, Burger, Group, Modal, useMantineTheme } from "@mantine/core";
-import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import {
+    AppShell,
+    Burger,
+    Group,
+    Modal,
+    Title,
+    useMantineTheme,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { IconMessageChatbotFilled } from "@tabler/icons-react";
 
 import ApiKeyLogin from "@components/Login/ApiKeyLogin";
 import ChatHistory from "@components/Chat/ChatHistory";
-import Logo from "@components/Chat/Logo";
 import Navbar from "@components/Chat/Navbar";
 import RoleTabs from "@components/Chat/RoleTabs";
 import { ApiSessionStatus } from "@hooks/useApiSession";
@@ -12,7 +19,6 @@ import { useChat } from "@hooks/useChat";
 export default function App() {
     const chat = useChat();
     const [isNavbarOpened, { toggle: toggleNavbar }] = useDisclosure(false);
-    const isMobile = useMediaQuery("(max-width: 768px)") as boolean;
 
     const theme = useMantineTheme();
 
@@ -42,40 +48,46 @@ export default function App() {
             </Modal>
 
             <AppShell
-                layout="alt"
-                header={{ height: 60, collapsed: !isMobile }}
-                footer={{ height: 210 }}
+                header={{ height: 55 }}
+                footer={{ height: 170 }}
                 navbar={{
-                    width: 80,
+                    width: 170,
                     breakpoint: "sm",
-                    collapsed: { mobile: !isNavbarOpened },
+                    collapsed: {
+                        desktop: !isNavbarOpened,
+                        mobile: !isNavbarOpened,
+                    },
                 }}
                 padding="lg"
             >
-                <AppShell.Header p="md">
+                <AppShell.Header bg={theme.colors.gray[0]} p="md">
                     <Group>
                         <Burger
                             opened={isNavbarOpened}
                             onClick={toggleNavbar}
-                            hiddenFrom="sm"
                             size="sm"
                         />
-                        <Logo isMobile={isMobile} />
+                        <Group gap="sm">
+                            <IconMessageChatbotFilled
+                                color={theme.colors.blue[8]}
+                                size={30}
+                            />
+                            <Title order={3}>Messages</Title>
+                        </Group>
                     </Group>
                 </AppShell.Header>
-                <AppShell.Navbar bg={theme.colors.gray[0]} maw={225} p="md">
-                    <Burger
-                        opened={isNavbarOpened}
-                        onClick={toggleNavbar}
-                        hiddenFrom="sm"
-                        size="sm"
-                    />
-                    <Navbar llm={chat.llm} isMobile={isMobile} />
+                <AppShell.Navbar bg={theme.colors.gray[0]} maw={200} p="md">
+                    <Navbar llm={chat.llm} toggleNavbar={toggleNavbar} />
                 </AppShell.Navbar>
                 <AppShell.Main>
                     <ChatHistory messages={chat.ui.output.messages} />
                 </AppShell.Main>
-                <AppShell.Footer bg={theme.colors.gray[0]} p="md">
+                <AppShell.Footer
+                    bg={theme.colors.gray[0]}
+                    pb="md"
+                    pl="md"
+                    pr="md"
+                >
                     <RoleTabs chat={chat} />
                 </AppShell.Footer>
             </AppShell>

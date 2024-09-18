@@ -18,6 +18,8 @@ export default function ChatForm({ chat }: ChatFormProps) {
         chat.ui.sendMessage();
     };
 
+    const numRows = 3;
+
     return (
         <form onSubmit={handleSubmit}>
             <Group gap="sm">
@@ -28,8 +30,8 @@ export default function ChatForm({ chat }: ChatFormProps) {
                 <Textarea
                     aria-label="Message input"
                     autosize={true}
-                    maxRows={4}
-                    minRows={4}
+                    maxRows={numRows}
+                    minRows={numRows}
                     onChange={(e) => chat.ui.input.setText(e.target.value)}
                     onKeyDown={getHotkeyHandler([
                         ["mod+Enter", handleSubmit],
