@@ -34,4 +34,3 @@ From within the chat text area:
 -   **Mod + Shift + Enter** - Generate LLM response
 -   **Mod + Shift + ,** - Undo LLM response
 -   **Mod + Shift + .** - Redo LLM response
-    https://help-me-respond.onrender.com
