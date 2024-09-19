@@ -14,7 +14,11 @@ This application simulates a chat session between an **Injured Worker** and a **
     ```bash
     npm install
     ```
-3. Start the application:
+3. Build the application for production:
+    ```bash
+    npm run build
+    ```
+4. Start the application:
     ```bash
     npm run start
     ```
