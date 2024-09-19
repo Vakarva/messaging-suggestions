@@ -12,13 +12,13 @@ interface ChatFormProps {
 }
 
 export default function ChatForm({ chat }: ChatFormProps) {
+    const numRows = 3;
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         chat.ui.sendMessage();
     };
-
-    const numRows = 3;
 
     return (
         <form onSubmit={handleSubmit}>
