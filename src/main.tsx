@@ -6,8 +6,6 @@ import "@mantine/core/styles.css";
 
 import App from "./App.tsx";
 
-// On my iPhone 15 pro max, selecting an input field automatically zooms in
-// Making size "lg" fixes this, but this shouldn't be necessary
 const theme = createTheme({
     components: {
         ...Object.fromEntries(

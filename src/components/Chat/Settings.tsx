@@ -81,11 +81,12 @@ export default function Settings({ close, llm }: SettingsProps) {
                     allowDeselect={false}
                     data={llm.apiSession.client.getAvailableModels()}
                     label="Model"
-                    onChange={(value) => setDraftModelName(value!)}
+                    onChange={(value) => setDraftModelName(value!)} // we know value is not undefined
                     value={draftModelName}
                 />
             </Fieldset>
             <Button
+                fullWidth
                 onClick={() => {
                     llm.updateSettings({
                         newContext: draftClaimContext,
@@ -93,7 +94,6 @@ export default function Settings({ close, llm }: SettingsProps) {
                     });
                     close();
                 }}
-                w="100%"
             >
                 Save
             </Button>

@@ -1,12 +1,4 @@
-import {
-    Button,
-    Drawer,
-    Group,
-    Stack,
-    Text,
-    Title,
-    Tooltip,
-} from "@mantine/core";
+import { Button, Drawer, Group, Stack, Text, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconLogout2, IconSettings } from "@tabler/icons-react";
 
@@ -15,33 +7,27 @@ import { LlmHook } from "@hooks/useLlm";
 
 import classes from "@styles/Navbar.module.css";
 
-interface NavbarLinkProps {
+interface NavbarButtonProps {
     icon: typeof IconSettings;
     label: string;
     onClick?(): void;
 }
 
-function NavbarLink({ icon: Icon, label, onClick }: NavbarLinkProps) {
+function NavbarButton({ icon: Icon, label, onClick }: NavbarButtonProps) {
     return (
-        <Tooltip
-            label={label}
-            position="right"
-            transitionProps={{ duration: 0 }}
+        <Button
+            className={classes.navbarLink}
+            display="flex"
+            h={50}
+            onClick={onClick}
+            p="sm"
+            radius="md"
+            variant="subtle"
+            w="100%"
         >
-            <Button
-                className={classes.navbarLink}
-                display="flex"
-                h={50}
-                onClick={onClick}
-                p="sm"
-                radius="md"
-                variant="subtle"
-                w="100%"
-            >
-                <Icon stroke={1.5} />
-                <Text ml="sm">{label}</Text>
-            </Button>
-        </Tooltip>
+            <Icon stroke={1.5} />
+            <Text ml="sm">{label}</Text>
+        </Button>
     );
 }
 
@@ -59,8 +45,8 @@ export default function Navbar({ llm, toggleNavbar }: NavbarProps) {
         { icon: IconLogout2, label: "Logout", onClick: llm.apiSession.logout },
     ];
 
-    const links = items.map((link) => (
-        <NavbarLink {...link} key={link.label} />
+    const navbarButtons = items.map((link) => (
+        <NavbarButton {...link} key={link.label} />
     ));
 
     const closeSettingsAndNavbar = () => {
@@ -83,9 +69,7 @@ export default function Navbar({ llm, toggleNavbar }: NavbarProps) {
                 <Settings close={closeSettingsAndNavbar} llm={llm} />
             </Drawer>
 
-            <Stack align="center" gap="sm">
-                {links}
-            </Stack>
+            <Stack gap="sm">{navbarButtons}</Stack>
         </Stack>
     );
 }

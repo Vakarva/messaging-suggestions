@@ -10,7 +10,6 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
     const theme = useMantineTheme();
 
     const isUser = message.role === Role.user;
-
     const time: string = message.createdAt.toLocaleTimeString([], {
         hour: "numeric",
         minute: "numeric",
@@ -24,17 +23,21 @@ export default function ChatBubble({ message }: ChatBubbleProps) {
                 c={isUser ? theme.black : theme.white}
                 p="xs"
                 shadow="xs"
+                radius="md"
                 styles={{
                     root: {
                         ...(!isUser && { borderBottomRightRadius: "0" }),
                         ...(isUser && { borderBottomLeftRadius: "0" }),
                     },
                 }}
-                w="100%"
             >
                 <Text
                     size="lg"
-                    style={{ hyphens: "auto", wordBreak: "break-word" }}
+                    style={{
+                        hyphens: "auto",
+                        whiteSpace: "pre-wrap",
+                        wordBreak: "break-word",
+                    }}
                 >
                     {message.content}
                 </Text>

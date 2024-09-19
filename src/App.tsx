@@ -21,6 +21,8 @@ export default function App() {
     const [isNavbarOpened, { toggle: toggleNavbar }] = useDisclosure(false);
 
     const theme = useMantineTheme();
+    const componentBgColor = theme.colors.gray[0];
+    const componentPadding = theme.spacing.md;
 
     return (
         <>
@@ -60,7 +62,7 @@ export default function App() {
                 }}
                 padding="lg"
             >
-                <AppShell.Header bg={theme.colors.gray[0]} p="md">
+                <AppShell.Header bg={componentBgColor} p={componentPadding}>
                     <Group>
                         <Burger
                             opened={isNavbarOpened}
@@ -76,17 +78,21 @@ export default function App() {
                         </Group>
                     </Group>
                 </AppShell.Header>
-                <AppShell.Navbar bg={theme.colors.gray[0]} maw={200} p="md">
+                <AppShell.Navbar
+                    bg={componentBgColor}
+                    maw={200}
+                    p={componentPadding}
+                >
                     <Navbar llm={chat.llm} toggleNavbar={toggleNavbar} />
                 </AppShell.Navbar>
                 <AppShell.Main>
                     <ChatHistory messages={chat.ui.output.messages} />
                 </AppShell.Main>
                 <AppShell.Footer
-                    bg={theme.colors.gray[0]}
-                    pb="md"
-                    pl="md"
-                    pr="md"
+                    bg={componentBgColor}
+                    pb={componentPadding}
+                    pl={componentPadding}
+                    pr={componentPadding}
                 >
                     <RoleTabs chat={chat} />
                 </AppShell.Footer>

@@ -48,7 +48,7 @@ function AnthropicApiClient(apiKey: string): LlmApiClient {
     ];
     const _defaultModelName = _availableModels[0];
 
-    // Anthropic requires messages to alternate between user and assistant
+    // Anthropic requires that messages alternate between user and assistant
     const _mergedAndFormatted = (messages: Message[]): AnthropicMessage[] => {
         return messages.reduce<AnthropicMessage[]>((acc, message, index) => {
             if (index === 0) {
@@ -87,7 +87,7 @@ function AnthropicApiClient(apiKey: string): LlmApiClient {
                 max_tokens: 512,
                 stream: true,
             });
-            // AsyncGenerator needed because stream must be later coupled with a write "location"
+            // AsyncGenerator needed to make stream generic for various API providers
             async function* streamGenerator(): AsyncGenerator<string> {
                 for await (const event of stream) {
                     if (

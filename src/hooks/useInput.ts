@@ -74,8 +74,8 @@ export function useInput(): InputHook {
         _setTextSelection(TextSelection.USER);
     };
 
-    // We don't want the inputs to be populated when the role changes
-    // In the production app we wouldn't need this because there would be no role switching
+    // We don't want input to persist when role changes
+    // In production, we won't need this because there will be no role switching
     useEffect(reset, [role]);
 
     return {

@@ -20,7 +20,6 @@ export default function RoleTabs({ chat }: RoleTabsProps) {
             deg: 135,
         },
     };
-
     const inactiveTabGradient = {
         gradient: {
             from: theme.colors.gray[3],

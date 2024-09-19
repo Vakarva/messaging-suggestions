@@ -7,10 +7,10 @@ import {
 } from "@custom-types";
 
 export enum ApiSessionStatus {
+    ERROR,
     IDLE,
     LOADING,
     SUCCESS,
-    ERROR,
 }
 
 export interface ApiSessionHook {
