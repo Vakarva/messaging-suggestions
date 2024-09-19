@@ -88,6 +88,7 @@ function AnthropicApiClient(apiKey: string): LlmApiClient {
                 stream: true,
             });
             // AsyncGenerator needed to make stream generic for various API providers
+            // Anthropic's streaming API: https://docs.anthropic.com/en/api/messages-streaming
             async function* streamGenerator(): AsyncGenerator<string> {
                 for await (const event of stream) {
                     if (
@@ -168,7 +169,7 @@ function OpenAiApiClient(apiKey: string): LlmApiClient {
                 messages: formattedMessages,
                 stream: true,
             });
-
+            // OpenAI's streaming API: https://platform.openai.com/docs/api-reference/chat/streaming
             async function* streamGenerator(): AsyncGenerator<string> {
                 for await (const chunk of stream) {
                     const content = chunk.choices[0]?.delta?.content;
