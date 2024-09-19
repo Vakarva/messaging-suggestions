@@ -16,7 +16,7 @@ This application simulates a chat session between an **Injured Worker** and a **
     ```
 3. Start the application:
     ```bash
-    npm run dev
+    npm run start
     ```
 
 ## Usage
