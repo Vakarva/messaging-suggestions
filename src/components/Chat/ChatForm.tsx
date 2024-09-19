@@ -11,9 +11,9 @@ interface ChatFormProps {
     chat: ChatHook;
 }
 
-export default function ChatForm({ chat }: ChatFormProps) {
-    const numRows = 3;
+const numRows = 3;
 
+export default function ChatForm({ chat }: ChatFormProps) {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
