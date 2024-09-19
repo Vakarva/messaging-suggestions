@@ -1,6 +1,6 @@
 # Messaging Suggestions App
 
-<a href="https://help-me-respond.onrender.com" target="_blank">Live Demo</a>
+<a href="https://help-me-respond.onrender.com" target="_blank" rel="noopener noreferrer">Live Demo</a>
 
 This application simulates a chat session between an **Injured Worker** and a **Claims Adjuster**. The Adjuster has the option of generating an LLM suggested response to the Worker's message. The Adjuster can adjust the suggested response, send it as is, or discard it altogether.
 
