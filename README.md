@@ -34,7 +34,7 @@ This application simulates a chat session between an **Injured Worker** and a **
 
 From within the chat text area:
 
--   **Mod + Enter** - Send message
--   **Mod + Shift + Enter** - Generate LLM response
--   **Mod + Shift + ,** - Undo LLM response
--   **Mod + Shift + .** - Redo LLM response
+-   **Send message**: `Mod + Enter`
+-   **Generate LLM response**: `Mod + Shift + Enter`
+-   **Undo LLM response**: `Mod + Shift + ,`
+-   **Redo LLM response**: `Mod + Shift + .`
