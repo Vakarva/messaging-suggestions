@@ -1,50 +1,40 @@
-# React + TypeScript + Vite
+# Messaging Suggestions App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<a href="https://help-me-respond.onrender.com" target="_blank" rel="noopener noreferrer">Live Demo</a>
 
-Currently, two official plugins are available:
+This application simulates a chat session between an **Injured Worker** and a **Claims Adjuster**. The Adjuster has the option of generating an LLM suggested response to the Worker's message. The Adjuster can adjust the suggested response, send it as is, or discard it altogether.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Getting Started
 
-## Expanding the ESLint configuration
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/Vakarva/messaging-suggestions/
+    ```
+2. Install dependencies:
+    ```bash
+    npm install
+    ```
+3. Build the application for production:
+    ```bash
+    npm run build
+    ```
+4. Start the application:
+    ```bash
+    npm start
+    ```
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Usage
 
-- Configure the top-level `parserOptions` property like this:
+1. Enter your API key (supports OpenAI and Anthropic)
+2. Write messages as the **Worker** and the **Adjuster**.
+3. The **Adjuster** can generate an LLM-suggested response.
+4. Add additional context via **Settings** in the **Navbar**.
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+### Hotkeys
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+From within the chat text area:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+-   **Send message**: `Mod + Enter`
+-   **Generate LLM response**: `Mod + Shift + Enter`
+-   **Undo LLM response**: `Mod + Shift + ,`
+-   **Redo LLM response**: `Mod + Shift + .`
