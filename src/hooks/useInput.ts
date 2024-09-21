@@ -23,7 +23,7 @@ export interface InputHook {
     undo: () => void;
 }
 
-export function useInput(): InputHook {
+export default function useInput(): InputHook {
     const [role, setRole] = useState<Role>(Role.user);
     const [_userTextBox, _setUserTextBox] = useState("");
     const [_llmTextBox, _setLlmTextBox] = useState("");

@@ -9,8 +9,7 @@ import {
 } from "@mantine/core";
 import { NumberFormatValues, SourceInfo } from "react-number-format";
 
-import { useClaimContext } from "@hooks/useClaimContext";
-import { LlmHook } from "@hooks/useLlm";
+import { LlmHook, useClaimContext } from "@hooks/index";
 
 interface SettingsProps {
     llm: LlmHook;

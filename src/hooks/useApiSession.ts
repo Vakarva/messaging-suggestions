@@ -24,7 +24,7 @@ export interface ApiSessionHook {
     validateApiKey: () => Promise<void>;
 }
 
-export function useApiSession(): ApiSessionHook {
+export default function useApiSession(): ApiSessionHook {
     const [apiProviderName, setApiProviderName] = useState<LlmProviderName>(
         LlmProviderName.openAi
     );

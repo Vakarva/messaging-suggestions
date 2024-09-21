@@ -4,7 +4,7 @@ import { useScrollIntoView } from "@mantine/hooks";
 
 import { Message, Role } from "@custom-types";
 
-import ChatBubble from "@components/Chat/ChatBubble";
+import { ChatBubble } from "@components/Chat/index";
 
 interface ChatHistoryProps {
     messages: Message[];

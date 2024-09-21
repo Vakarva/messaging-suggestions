@@ -2,8 +2,8 @@ import { Button, Drawer, Group, Stack, Text, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconLogout2, IconSettings } from "@tabler/icons-react";
 
-import Settings from "@components/Chat/Settings";
-import { LlmHook } from "@hooks/useLlm";
+import { Settings } from "@components/Chat/index";
+import { LlmHook } from "@hooks/index";
 
 import classes from "@styles/Navbar.module.css";
 

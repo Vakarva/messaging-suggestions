@@ -11,7 +11,7 @@ import {
     IconBrain,
 } from "@tabler/icons-react";
 
-import { ChatHook } from "@hooks/useChat";
+import { ChatHook } from "@hooks/index";
 
 interface ControlButtonProps {
     icon: typeof IconArrowBackUp;

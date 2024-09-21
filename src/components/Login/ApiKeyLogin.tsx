@@ -1,7 +1,7 @@
 import { Button, Select, PasswordInput, Stack } from "@mantine/core";
 import { getHotkeyHandler } from "@mantine/hooks";
 import { LlmProviderName } from "@custom-types";
-import { ApiSessionHook, ApiSessionStatus } from "@hooks/useApiSession";
+import { ApiSessionHook, ApiSessionStatus } from "@hooks/index";
 
 export default function ApiKeyLogin({
     apiKey,

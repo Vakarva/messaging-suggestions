@@ -9,12 +9,9 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconMessageChatbotFilled } from "@tabler/icons-react";
 
-import ApiKeyLogin from "@components/Login/ApiKeyLogin";
-import ChatHistory from "@components/Chat/ChatHistory";
-import Navbar from "@components/Chat/Navbar";
-import RoleTabs from "@components/Chat/RoleTabs";
-import { ApiSessionStatus } from "@hooks/useApiSession";
-import { useChat } from "@hooks/useChat";
+import { ChatHistory, Navbar, RoleTabs } from "@components/Chat/index";
+import { ApiKeyLogin } from "@components/Login/index";
+import { ApiSessionStatus, useChat } from "@hooks/index";
 
 export default function App() {
     const chat = useChat();

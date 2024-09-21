@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export interface ClaimContext {
     claimId: string;
@@ -8,7 +8,7 @@ export interface ClaimContext {
 }
 
 export interface ClaimContextHook {
-    buildPrompt: () => string;
+    getPrompt: () => string;
     claimId: string;
     nextAppointment: string;
     nextPaymentAmount: string;
@@ -17,9 +17,9 @@ export interface ClaimContextHook {
     update: (name: string, value: string) => void;
 }
 
-export const useClaimContext = (
+export default function useClaimContext(
     context: Partial<ClaimContext> = {}
-): ClaimContextHook => {
+): ClaimContextHook {
     const [claimId, _setClaimId] = useState<string>(context.claimId || "");
     const [nextAppointment, _setNextAppointment] = useState<string>(
         context.nextAppointment || ""
@@ -38,14 +38,22 @@ export const useClaimContext = (
         nextPaymentDate = "Next payment date",
     }
 
-    const buildPrompt = (): string => {
-        let promptsArray = [
+    // Only needs to be created once
+    const _staticPrompts = useMemo(() => {
+        const staticPromptsArray = [
             "You are a helpful insurance claims adjuster.",
             "You are aiding an injured worker and responding to any questions they have about their insurance case.",
             "Please respond in a way that is easy to read in a chat interface.",
             "Avoid using markdown such as bold, numbered lists, or headings.",
             "Keep your responses conversational and plain-text only, with short and simple sentences.",
             "Keep the conversation focused on their insurance claim and any related issues; redirect back to their insurance claim if the conversation strays.",
+        ];
+
+        return staticPromptsArray.join(" ");
+    }, []);
+
+    const getPrompt = (): string => {
+        let dynamicPromptsArray = [
             `The current local date and time is ${new Date().toLocaleString()}.`,
         ];
 
@@ -65,10 +73,10 @@ export const useClaimContext = (
             });
         if (contextArray.length > 0) {
             const context = `The worker's: ${contextArray.join("; ")}.`;
-            promptsArray.push(context);
+            dynamicPromptsArray.push(context);
         }
 
-        const prompts = promptsArray.join(" ");
+        const prompts = [_staticPrompts, ...dynamicPromptsArray].join(" ");
 
         return prompts;
     };
@@ -103,7 +111,7 @@ export const useClaimContext = (
     };
 
     return {
-        buildPrompt,
+        getPrompt,
         claimId,
         nextAppointment,
         nextPaymentAmount,
@@ -111,4 +119,4 @@ export const useClaimContext = (
         set,
         update,
     };
-};
+}

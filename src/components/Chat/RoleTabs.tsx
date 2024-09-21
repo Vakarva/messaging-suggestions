@@ -3,8 +3,8 @@ import { IconHeartbeat, IconUserFilled } from "@tabler/icons-react";
 
 import { Role } from "@custom-types";
 
-import ChatForm from "@components/Chat/ChatForm";
-import { ChatHook } from "@hooks/useChat";
+import { ChatForm } from "@components/Chat/index";
+import { ChatHook } from "@hooks/index";
 
 interface RoleTabsProps {
     chat: ChatHook;

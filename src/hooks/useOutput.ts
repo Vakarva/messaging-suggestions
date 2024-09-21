@@ -8,7 +8,7 @@ export interface OutputHook {
     isSuggestionDisabled: boolean;
 }
 
-export function useOutput(): OutputHook {
+export default function useOutput(): OutputHook {
     const [messages, _setMessages] = useState<Message[]>([]);
 
     const append = (content: string, role: Role) => {

@@ -4,8 +4,8 @@ import { IconArrowUp } from "@tabler/icons-react";
 
 import { Role } from "@custom-types";
 
-import AiActionPanel from "@components/Chat/AiActionPanel";
-import { ChatHook } from "@hooks/useChat";
+import { AiActionPanel } from "@components/Chat/index";
+import { ChatHook } from "@hooks/index";
 
 interface ChatFormProps {
     chat: ChatHook;

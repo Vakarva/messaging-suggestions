@@ -1,7 +1,6 @@
 import { useState } from "react";
 
-import { LlmHook, useLlm } from "@hooks/useLlm";
-import { UiHook, useUi } from "@hooks/useUi";
+import { LlmHook, UiHook, useLlm, useUi } from "@hooks/index";
 
 export interface ChatHook {
     isLoadingStream: boolean;
@@ -10,14 +9,14 @@ export interface ChatHook {
     ui: UiHook;
 }
 
-export function useChat(): ChatHook {
+export default function useChat(): ChatHook {
     const llm = useLlm();
     const [isLoadingStream, _setIsLoadingStream] = useState(false);
     const ui = useUi();
 
     const streamLlmResponse = async (): Promise<void> => {
         _setIsLoadingStream(true);
-        const prompt = llm.context.buildPrompt();
+        const prompt = llm.context.getPrompt();
         try {
             const stream = await llm.apiSession.client.getStream(
                 prompt,

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 
-import { ApiSessionHook, useApiSession } from "@hooks/useApiSession";
 import {
+    ApiSessionHook,
     ClaimContext,
     ClaimContextHook,
+    useApiSession,
     useClaimContext,
-} from "@hooks/useClaimContext";
+} from "@hooks/index";
 
 export interface LlmHook {
     apiSession: ApiSessionHook;
@@ -19,7 +20,7 @@ export interface LlmHook {
     ) => void;
 }
 
-export function useLlm(): LlmHook {
+export default function useLlm(): LlmHook {
     const apiSession = useApiSession();
     const context = useClaimContext();
     const [name, setName] = useState<string>(

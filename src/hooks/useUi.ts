@@ -1,5 +1,4 @@
-import { InputHook, useInput } from "@hooks/useInput";
-import { OutputHook, useOutput } from "@hooks/useOutput";
+import { InputHook, OutputHook, useInput, useOutput } from "@hooks/index";
 
 export interface UiHook {
     input: InputHook;
@@ -7,7 +6,7 @@ export interface UiHook {
     sendMessage: () => void;
 }
 
-export function useUi(): UiHook {
+export default function useUi(): UiHook {
     const input = useInput();
     const output = useOutput();
 
