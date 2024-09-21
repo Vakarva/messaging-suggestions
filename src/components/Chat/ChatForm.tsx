@@ -17,7 +17,7 @@ export default function ChatForm({ chat }: ChatFormProps) {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        chat.ui.sendMessage();
+        chat.sendMessage();
     };
 
     return (
@@ -35,12 +35,7 @@ export default function ChatForm({ chat }: ChatFormProps) {
                     onChange={(e) => chat.ui.input.setText(e.target.value)}
                     onKeyDown={getHotkeyHandler([
                         ["mod+Enter", handleSubmit],
-                        [
-                            "mod+Shift+Enter",
-                            chat.ui.input.role === Role.assistant
-                                ? chat.streamLlmResponse
-                                : () => {},
-                        ],
+                        ["mod+Shift+Enter", chat.streamLlmResponse],
                         ["mod+/", chat.ui.input.toggleRole],
                         ["mod+Shift+,", chat.ui.input.undo],
                         ["mod+Shift+.", chat.ui.input.redo],

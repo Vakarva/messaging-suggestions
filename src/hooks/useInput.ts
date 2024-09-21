@@ -47,7 +47,9 @@ export default function useInput(): InputHook {
     };
 
     const redo = () => {
-        _setTextSelection(TextSelection.LLM);
+        if (!isRedoDisabled) {
+            _setTextSelection(TextSelection.LLM);
+        }
     };
 
     const reset = () => {
@@ -71,7 +73,9 @@ export default function useInput(): InputHook {
     };
 
     const undo = () => {
-        _setTextSelection(TextSelection.USER);
+        if (!isUndoDisabled) {
+            _setTextSelection(TextSelection.USER);
+        }
     };
 
     // We don't want input to persist when role changes
