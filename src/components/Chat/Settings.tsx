@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Button,
     Fieldset,
@@ -17,8 +17,12 @@ interface SettingsProps {
 }
 
 export default function Settings({ close, llm }: SettingsProps) {
-    const draftClaimContext = useClaimContext(llm.context);
+    const draftClaimContext = useClaimContext();
     const [draftModelName, setDraftModelName] = useState<string>(llm.name);
+
+    useEffect(() => {
+        draftClaimContext.set(llm.context.data);
+    }, [llm.context.data]);
 
     const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -29,8 +33,10 @@ export default function Settings({ close, llm }: SettingsProps) {
         values: NumberFormatValues,
         sourceInfo: SourceInfo
     ) => {
-        const target = sourceInfo.event?.target as HTMLInputElement; // TS needs help inferring target's type
-        draftClaimContext.update(target.name, values.formattedValue);
+        const target = sourceInfo.event?.target as HTMLInputElement | undefined; // TS needs help inferring target's type
+        if (target) {
+            draftClaimContext.update(target.name, values.formattedValue);
+        }
     };
 
     return (
@@ -43,14 +49,14 @@ export default function Settings({ close, llm }: SettingsProps) {
                         onChange={handleTextChange}
                         placeholder="Claim ID"
                         type="text"
-                        value={draftClaimContext.claimId}
+                        value={draftClaimContext.data.claimId}
                     />
                     <TextInput
                         label="Next appointment"
                         name="nextAppointment"
                         onChange={handleTextChange}
                         type="date"
-                        value={draftClaimContext.nextAppointment}
+                        value={draftClaimContext.data.nextAppointment}
                     />
                     <NumberInput
                         decimalScale={2}
@@ -63,15 +69,14 @@ export default function Settings({ close, llm }: SettingsProps) {
                         placeholder="$0.00"
                         prefix="$"
                         thousandSeparator=","
-                        type="text"
-                        value={draftClaimContext.nextPaymentAmount}
+                        value={draftClaimContext.data.nextPaymentAmount}
                     />
                     <TextInput
                         label="Next payment date"
                         name="nextPaymentDate"
                         onChange={handleTextChange}
                         type="date"
-                        value={draftClaimContext.nextPaymentDate}
+                        value={draftClaimContext.data.nextPaymentDate}
                     />
                 </Stack>
             </Fieldset>
@@ -88,7 +93,7 @@ export default function Settings({ close, llm }: SettingsProps) {
                 fullWidth
                 onClick={() => {
                     llm.updateSettings({
-                        newContext: draftClaimContext,
+                        newContext: draftClaimContext.data,
                         newName: draftModelName,
                     });
                     close();

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 export interface ClaimContext {
     claimId: string;
@@ -7,115 +7,78 @@ export interface ClaimContext {
     nextPaymentDate: string;
 }
 
+const emptyClaimContext: ClaimContext = {
+    claimId: "",
+    nextAppointment: "",
+    nextPaymentAmount: "",
+    nextPaymentDate: "",
+};
+
 export interface ClaimContextHook {
-    getPrompt: () => string;
-    claimId: string;
-    nextAppointment: string;
-    nextPaymentAmount: string;
-    nextPaymentDate: string;
+    buildPrompt: () => string;
+    data: ClaimContext;
     set: (context: ClaimContext) => void;
     update: (name: string, value: string) => void;
 }
 
-export default function useClaimContext(
-    context: Partial<ClaimContext> = {}
-): ClaimContextHook {
-    const [claimId, _setClaimId] = useState<string>(context.claimId || "");
-    const [nextAppointment, _setNextAppointment] = useState<string>(
-        context.nextAppointment || ""
+export default function useClaimContext(): ClaimContextHook {
+    const [data, setData] = useState<ClaimContext>(emptyClaimContext);
+
+    const _staticPrompts = useMemo(
+        () =>
+            [
+                "You are a helpful insurance claims adjuster.",
+                "You are aiding an injured worker and responding to any questions they have about their insurance case.",
+                "Please respond in a way that is easy to read in a chat interface.",
+                "Avoid using markdown such as bold, numbered lists, or headings.",
+                "Keep your responses conversational and plain-text only, with short and simple sentences.",
+                "Keep the conversation focused on their insurance claim and any related issues; redirect back to their insurance claim if the conversation strays.",
+            ].join(" "),
+        []
     );
-    const [nextPaymentAmount, _setNextPaymentAmount] = useState<string>(
-        context.nextPaymentAmount || ""
+
+    const _buildContextPromptsArray = useCallback(
+        (context: ClaimContext): string[] => {
+            return Object.entries(context)
+                .filter(([_, value]) => value.trim() !== "")
+                .map(([key, value]) => {
+                    const label = key
+                        .replace(/([A-Z])/g, " $1")
+                        .replace(/^./, (str) => str.toUpperCase());
+                    return `${label} is ${value}`;
+                });
+        },
+        []
     );
-    const [nextPaymentDate, _setNextPaymentDate] = useState<string>(
-        context.nextPaymentDate || ""
-    );
 
-    enum _ClaimContextLabels {
-        claimId = "Claim ID",
-        nextAppointment = "Next appointment",
-        nextPaymentAmount = "Next payment amount",
-        nextPaymentDate = "Next payment date",
-    }
-
-    // Only needs to be created once
-    const _staticPrompts = useMemo(() => {
-        const staticPromptsArray = [
-            "You are a helpful insurance claims adjuster.",
-            "You are aiding an injured worker and responding to any questions they have about their insurance case.",
-            "Please respond in a way that is easy to read in a chat interface.",
-            "Avoid using markdown such as bold, numbered lists, or headings.",
-            "Keep your responses conversational and plain-text only, with short and simple sentences.",
-            "Keep the conversation focused on their insurance claim and any related issues; redirect back to their insurance claim if the conversation strays.",
-        ];
-
-        return staticPromptsArray.join(" ");
-    }, []);
-
-    const getPrompt = (): string => {
+    const buildPrompt = (): string => {
         let dynamicPromptsArray = [
             `The current local date and time is ${new Date().toLocaleString()}.`,
         ];
 
-        const contextArray = Object.entries({
-            claimId,
-            nextAppointment,
-            nextPaymentAmount,
-            nextPaymentDate,
-        })
-            .filter(([, value]) => value)
-            .map(([key, value]) => {
-                const label =
-                    _ClaimContextLabels[
-                        key as keyof typeof _ClaimContextLabels
-                    ];
-                return `${label} is ${value}`;
-            });
-        if (contextArray.length > 0) {
-            const context = `The worker's: ${contextArray.join("; ")}.`;
-            dynamicPromptsArray.push(context);
+        const contextPromptsArray = _buildContextPromptsArray(data);
+        if (contextPromptsArray.length > 0) {
+            const contextPrompts = `The worker's: ${contextPromptsArray.join(
+                "; "
+            )}.`;
+            dynamicPromptsArray.push(contextPrompts);
         }
 
         const prompts = [_staticPrompts, ...dynamicPromptsArray].join(" ");
-
         return prompts;
     };
 
     const update = (name: string, value: string) => {
-        switch (name) {
-            case "claimId":
-                _setClaimId(value);
-                break;
-            case "nextAppointment":
-                _setNextAppointment(value);
-                break;
-            case "nextPaymentAmount":
-                _setNextPaymentAmount(value);
-                break;
-            case "nextPaymentDate":
-                _setNextPaymentDate(value);
-                break;
-        }
+        setData((oldData) => ({ ...oldData, [name]: value }));
     };
 
-    const set = ({
-        claimId,
-        nextAppointment,
-        nextPaymentAmount,
-        nextPaymentDate,
-    }: ClaimContext) => {
-        _setClaimId(claimId);
-        _setNextAppointment(nextAppointment);
-        _setNextPaymentAmount(nextPaymentAmount);
-        _setNextPaymentDate(nextPaymentDate);
+    const set = (data: ClaimContext) => {
+        setData((oldData) => ({ ...oldData, ...data }));
     };
 
     return {
-        getPrompt,
-        claimId,
-        nextAppointment,
-        nextPaymentAmount,
-        nextPaymentDate,
+        buildPrompt,
+        data,
         set,
         update,
     };

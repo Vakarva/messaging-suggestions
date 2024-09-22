@@ -30,7 +30,7 @@ export default function useChat(): ChatHook {
             !ui.output.isSuggestionDisabled
         ) {
             _setIsLoadingStream(true);
-            const prompt = llm.context.getPrompt();
+            const prompt = llm.context.buildPrompt();
             try {
                 const stream = await llm.apiSession.client.getStream(
                     prompt,

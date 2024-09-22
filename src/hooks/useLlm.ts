@@ -12,12 +12,10 @@ export interface LlmHook {
     apiSession: ApiSessionHook;
     context: ClaimContextHook;
     name: string;
-    updateSettings: (
-        settings: Partial<{
-            newContext: ClaimContext;
-            newName: string;
-        }>
-    ) => void;
+    updateSettings: (settings: {
+        newContext: ClaimContext;
+        newName: string;
+    }) => void;
 }
 
 export default function useLlm(): LlmHook {
@@ -30,16 +28,12 @@ export default function useLlm(): LlmHook {
     const updateSettings = ({
         newContext,
         newName,
-    }: Partial<{
+    }: {
         newContext: ClaimContext;
         newName: string;
-    }>) => {
-        if (newContext) {
-            context.set(newContext);
-        }
-        if (newName) {
-            setName(newName);
-        }
+    }) => {
+        context.set(newContext);
+        setName(newName);
     };
 
     useEffect(() => {
