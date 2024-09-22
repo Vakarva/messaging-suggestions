@@ -1,0 +1,9 @@
+.llmTextarea {
+    --border-outline-color: var(--mantine-color-violet-filled);
+
+    &:focus,
+    &:focus-visible {
+        border: 1px solid var(--border-outline-color);
+        outline: 2px solid var(--border-outline-color);
+    }
+}

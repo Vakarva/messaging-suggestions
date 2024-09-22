@@ -55,13 +55,13 @@ export default function AiActionPanel({ chat }: AiActionPanelProps) {
     const controlItems = [
         {
             icon: IconArrowBackUp,
-            label: "Undo suggestion",
+            label: "Undo",
             disabled: chat.ui.input.isUndoDisabled,
             onClick: chat.ui.input.undo,
         },
         {
             icon: IconArrowForwardUp,
-            label: "Redo suggestion",
+            label: "Redo",
             disabled: chat.ui.input.isRedoDisabled,
             onClick: chat.ui.input.redo,
         },
@@ -83,7 +83,7 @@ export default function AiActionPanel({ chat }: AiActionPanelProps) {
             <Tooltip
                 label={`New Suggestion: ${chat.llm.name}`}
                 openDelay={openDelay}
-                position="bottom"
+                position="right"
             >
                 <ActionIcon
                     color="violet"

@@ -16,7 +16,7 @@ interface NavbarButtonProps {
 function NavbarButton({ icon: Icon, label, onClick }: NavbarButtonProps) {
     return (
         <Button
-            className={classes.navbarLink}
+            className={classes.navbarButton}
             display="flex"
             h={50}
             onClick={onClick}

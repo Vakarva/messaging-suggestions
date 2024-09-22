@@ -5,7 +5,9 @@ import { IconArrowUp } from "@tabler/icons-react";
 import { Role } from "@custom-types";
 
 import { AiActionPanel } from "@components/Chat/index";
-import { ChatHook } from "@hooks/index";
+import { ChatHook, TextSelection } from "@hooks/index";
+
+import classes from "@styles/ChatForm.module.css";
 
 interface ChatFormProps {
     chat: ChatHook;
@@ -30,6 +32,12 @@ export default function ChatForm({ chat }: ChatFormProps) {
                 <Textarea
                     aria-label="Message input"
                     autosize={true}
+                    classNames={{
+                        input:
+                            chat.ui.input.textSelection === TextSelection.LLM
+                                ? classes.llmTextarea
+                                : undefined,
+                    }}
                     maxRows={numRows}
                     minRows={numRows}
                     onChange={(e) => chat.ui.input.setText(e.target.value)}
