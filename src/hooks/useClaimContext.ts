@@ -52,7 +52,7 @@ export default function useClaimContext(): ClaimContextHook {
     );
 
     const buildPrompt = (): string => {
-        let dynamicPromptsArray = [
+        const dynamicPromptsArray = [
             `The current local date and time is ${new Date().toLocaleString()}.`,
         ];
 
