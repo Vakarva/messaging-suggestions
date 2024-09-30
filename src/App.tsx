@@ -11,7 +11,7 @@ import { IconMessageChatbotFilled } from "@tabler/icons-react";
 
 import { ChatHistory, Navbar, RoleTabs } from "@components/Chat/index";
 import { ApiKeyLogin } from "@components/Login/index";
-import { ApiSessionStatus, useChat } from "@hooks/index";
+import { useChat } from "@hooks/index";
 
 export default function App() {
     const chat = useChat();
@@ -28,7 +28,7 @@ export default function App() {
                 closeOnClickOutside={false}
                 closeOnEscape={false}
                 onClose={() => {}}
-                opened={chat.llm.apiSession.status !== ApiSessionStatus.SUCCESS}
+                opened={!chat.llm.apiSession.isSuccess}
                 overlayProps={{
                     blur: 3,
                 }}

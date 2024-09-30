@@ -1,18 +1,17 @@
 import { Button, Select, PasswordInput, Stack } from "@mantine/core";
 import { getHotkeyHandler } from "@mantine/hooks";
 import { LlmProviderName } from "@custom-types";
-import { ApiSessionHook, ApiSessionStatus } from "@hooks/index";
+import { ApiSessionHook } from "@hooks/index";
 
 export default function ApiKeyLogin({
     apiKey,
     apiProviderName,
     editApiKey,
     editApiProviderName,
-    status,
+    isError,
+    isLoading,
     validateApiKey,
 }: ApiSessionHook) {
-    const isLoading = status === ApiSessionStatus.LOADING;
-
     return (
         <Stack gap="md">
             <Stack gap={5}>
@@ -30,7 +29,7 @@ export default function ApiKeyLogin({
                     data-autofocus
                     disabled={isLoading}
                     error={
-                        status === ApiSessionStatus.ERROR
+                        isError
                             ? "Incorrect API Key: Please try again"
                             : undefined
                     }

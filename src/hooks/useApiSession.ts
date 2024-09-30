@@ -6,7 +6,7 @@ import {
     LlmProviderName,
 } from "@custom-types";
 
-export enum ApiSessionStatus {
+enum ApiSessionStatus {
     ERROR,
     IDLE,
     LOADING,
@@ -16,11 +16,13 @@ export enum ApiSessionStatus {
 export interface ApiSessionHook {
     apiKey: string;
     apiProviderName: LlmProviderName;
+    client: LlmApiClient;
     editApiKey: (newApiKey: string) => void;
     editApiProviderName: (newApiProviderName: LlmProviderName) => void;
-    client: LlmApiClient;
+    isError: boolean;
+    isLoading: boolean;
+    isSuccess: boolean;
     logout: () => void;
-    status: ApiSessionStatus;
     validateApiKey: () => Promise<void>;
 }
 
@@ -33,16 +35,20 @@ export default function useApiSession(): ApiSessionHook {
 
     const clientRef = useRef(createLlmApiClient(apiProviderName, apiKey));
 
+    const isError = status === ApiSessionStatus.ERROR;
+    const isLoading = status === ApiSessionStatus.LOADING;
+    const isSuccess = status === ApiSessionStatus.SUCCESS;
+
     const editApiKey = (newApiKey: string) => {
         setApiKey(newApiKey);
-        if (status === ApiSessionStatus.ERROR) {
+        if (isError) {
             setStatus(ApiSessionStatus.IDLE);
         }
     };
 
     const editApiProviderName = (newApiProviderName: LlmProviderName) => {
         setApiProviderName(newApiProviderName);
-        if (status === ApiSessionStatus.ERROR) {
+        if (isError) {
             setStatus(ApiSessionStatus.IDLE);
         }
     };
@@ -68,11 +74,13 @@ export default function useApiSession(): ApiSessionHook {
     return {
         apiKey,
         apiProviderName,
+        client: clientRef.current,
         editApiKey,
         editApiProviderName,
-        client: clientRef.current,
+        isError,
+        isLoading,
+        isSuccess,
         logout,
-        status,
         validateApiKey,
     };
 }
