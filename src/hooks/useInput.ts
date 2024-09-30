@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Role } from "@custom-types";
 
 export enum TextSelection {
-    USER,
+    HUMAN,
     LLM,
 }
 
@@ -28,13 +28,13 @@ export default function useInput(): InputHook {
     const [role, setRole] = useState<Role>(Role.user);
     const [_userTextBox, _setUserTextBox] = useState("");
     const [_llmTextBox, _setLlmTextBox] = useState("");
-    const [textSelection, _setTextSelection] = useState(TextSelection.USER);
+    const [textSelection, _setTextSelection] = useState(TextSelection.HUMAN);
 
     const text =
-        textSelection === TextSelection.USER ? _userTextBox : _llmTextBox;
+        textSelection === TextSelection.HUMAN ? _userTextBox : _llmTextBox;
     const isEmpty = text.trim() === "";
     const isRedoDisabled = !_llmTextBox || textSelection === TextSelection.LLM;
-    const isUndoDisabled = textSelection === TextSelection.USER;
+    const isUndoDisabled = textSelection === TextSelection.HUMAN;
 
     const append = (text: string) => {
         _setLlmTextBox((oldValue) => oldValue + text);
@@ -53,13 +53,13 @@ export default function useInput(): InputHook {
     };
 
     const reset = () => {
-        _setTextSelection(TextSelection.USER);
+        _setTextSelection(TextSelection.HUMAN);
         _setLlmTextBox("");
         _setUserTextBox("");
     };
 
     const setText = (text: string) => {
-        if (textSelection === TextSelection.USER) {
+        if (textSelection === TextSelection.HUMAN) {
             _setUserTextBox(text);
         } else {
             _setLlmTextBox(text);
@@ -74,7 +74,7 @@ export default function useInput(): InputHook {
 
     const undo = () => {
         if (!isUndoDisabled) {
-            _setTextSelection(TextSelection.USER);
+            _setTextSelection(TextSelection.HUMAN);
         }
     };
 
