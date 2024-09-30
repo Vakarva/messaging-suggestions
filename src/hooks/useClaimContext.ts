@@ -7,13 +7,6 @@ export interface ClaimContext {
     nextPaymentDate: string;
 }
 
-const emptyClaimContext: ClaimContext = {
-    claimId: "",
-    nextAppointment: "",
-    nextPaymentAmount: "",
-    nextPaymentDate: "",
-};
-
 export interface ClaimContextHook {
     buildPrompt: () => string;
     data: ClaimContext;
@@ -22,7 +15,12 @@ export interface ClaimContextHook {
 }
 
 export default function useClaimContext(): ClaimContextHook {
-    const [data, setData] = useState<ClaimContext>(emptyClaimContext);
+    const [data, setData] = useState<ClaimContext>({
+        claimId: "",
+        nextAppointment: "",
+        nextPaymentAmount: "",
+        nextPaymentDate: "",
+    });
 
     const _staticPrompts = useMemo(
         () =>
