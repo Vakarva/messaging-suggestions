@@ -80,7 +80,7 @@ function AnthropicApiClient(apiKey: string): LlmApiClient {
         const mergedAndFormattedMessages = _mergedAndFormatted(messages);
 
         try {
-            const stream = await anthropic.messages.stream({
+            const stream = await anthropic.messages.create({
                 system: prompt,
                 messages: mergedAndFormattedMessages,
                 model: model,
