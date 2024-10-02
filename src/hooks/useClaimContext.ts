@@ -42,7 +42,7 @@ export default function useClaimContext(): ClaimContextHook {
                 .filter(([_, value]) => value.trim() !== "")
                 .map(([key, value]) => {
                     const label = key
-                        .replace(/([A-Z])/g, " $1")
+                        .replaceAll(/([A-Z])/g, " $1")
                         .replace(/^./, (str) => str.toUpperCase());
                     return `${label} is ${value}`;
                 });
