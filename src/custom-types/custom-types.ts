@@ -49,27 +49,26 @@ function AnthropicApiClient(apiKey: string): LlmApiClient {
     const _defaultModelName = _availableModels[0];
 
     // Anthropic requires that messages alternate between user and assistant
-    const _mergedAndFormatted = (messages: Message[]): AnthropicMessage[] => {
-        return messages.reduce<AnthropicMessage[]>((acc, message, index) => {
-            if (index === 0) {
-                acc.push({
-                    role: message.role,
-                    content: message.content,
-                });
-            } else {
-                const prevMessage = acc[acc.length - 1];
+    const _convertToAnthropic = (messages: Message[]): AnthropicMessage[] => {
+        const anthropicMessages: AnthropicMessage[] = [];
 
-                if (prevMessage.role === message.role) {
-                    prevMessage.content += `\n${message.content}`;
-                } else {
-                    acc.push({
-                        role: message.role,
-                        content: message.content,
-                    });
-                }
+        messages.forEach((currentMessage) => {
+            const previousMessage = anthropicMessages.at(-1);
+
+            if (
+                previousMessage &&
+                previousMessage.role === currentMessage.role
+            ) {
+                previousMessage.content += `\n${currentMessage.content}`;
+            } else {
+                anthropicMessages.push({
+                    role: currentMessage.role,
+                    content: currentMessage.content,
+                });
             }
-            return acc;
-        }, []);
+        });
+
+        return anthropicMessages;
     };
 
     const getStream = async (
@@ -77,12 +76,12 @@ function AnthropicApiClient(apiKey: string): LlmApiClient {
         messages: Message[],
         model: string
     ): Promise<AsyncGenerator<string>> => {
-        const mergedAndFormattedMessages = _mergedAndFormatted(messages);
+        const anthropicMessages = _convertToAnthropic(messages);
 
         try {
             const stream = await anthropic.messages.create({
                 system: prompt,
-                messages: mergedAndFormattedMessages,
+                messages: anthropicMessages,
                 model: model,
                 max_tokens: 512,
                 stream: true,
@@ -141,14 +140,14 @@ function OpenAiApiClient(apiKey: string): LlmApiClient {
     const _availableModels = ["gpt-4o-mini", "gpt-4o"];
     const _defaultModelName = _availableModels[0];
 
-    const _formatted = (
+    const _convertToOpenAi = (
         prompt: string,
         messages: Message[]
     ): OpenAiMessage[] => {
-        const systemMessage = {
+        const systemMessage: OpenAiMessage = {
             role: "system",
             content: prompt,
-        } as OpenAiMessage;
+        };
 
         return [
             systemMessage,
@@ -161,12 +160,12 @@ function OpenAiApiClient(apiKey: string): LlmApiClient {
         messages: Message[],
         model: string
     ): Promise<AsyncGenerator<string>> => {
-        const formattedMessages = _formatted(prompt, messages);
+        const openAiMessages = _convertToOpenAi(prompt, messages);
 
         try {
             const stream = await openai.chat.completions.create({
                 model: model,
-                messages: formattedMessages,
+                messages: openAiMessages,
                 stream: true,
             });
             // OpenAI's streaming API: https://platform.openai.com/docs/api-reference/chat/streaming
