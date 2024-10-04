@@ -50,25 +50,25 @@ function AnthropicApiClient(apiKey: string): LlmApiClient {
 
     // Anthropic requires that messages alternate between user and assistant
     const _convertToAnthropic = (messages: Message[]): AnthropicMessage[] => {
-        const anthropicMessages: AnthropicMessage[] = [];
+        return messages.reduce<AnthropicMessage[]>(
+            (anthropicMessages, currentMessage) => {
+                const previousMessage = anthropicMessages.at(-1);
+                if (
+                    previousMessage &&
+                    previousMessage.role === currentMessage.role
+                ) {
+                    previousMessage.content += `\n${currentMessage.content}`;
+                } else {
+                    anthropicMessages.push({
+                        role: currentMessage.role,
+                        content: currentMessage.content,
+                    });
+                }
 
-        messages.forEach((currentMessage) => {
-            const previousMessage = anthropicMessages.at(-1);
-
-            if (
-                previousMessage &&
-                previousMessage.role === currentMessage.role
-            ) {
-                previousMessage.content += `\n${currentMessage.content}`;
-            } else {
-                anthropicMessages.push({
-                    role: currentMessage.role,
-                    content: currentMessage.content,
-                });
-            }
-        });
-
-        return anthropicMessages;
+                return anthropicMessages;
+            },
+            []
+        );
     };
 
     const getStream = async (
