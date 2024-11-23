@@ -81,7 +81,7 @@ export default function AiActionPanel({ chat }: AiActionPanelProps) {
         <Stack gap="xs" align="center">
             <Group gap="xs">{controlButtons}</Group>
             <Tooltip
-                label={`New Suggestion: ${chat.llm.name}`}
+                label={`New Suggestion: ${chat.llm.apiSession.llmName}`}
                 openDelay={openDelay}
                 position="right"
             >

@@ -18,7 +18,9 @@ interface SettingsProps {
 
 export default function Settings({ close, llm }: SettingsProps) {
     const draftClaimContext = useClaimContext(llm.context.data);
-    const [draftModelName, setDraftModelName] = useState<string>(llm.name);
+    const [draftModelName, setDraftModelName] = useState<string>(
+        llm.apiSession.llmName
+    );
 
     const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;

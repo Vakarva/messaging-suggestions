@@ -35,7 +35,7 @@ export default function useChat(): ChatHook {
                 const stream = await llm.apiSession.client.getStream(
                     prompt,
                     ui.output.messages,
-                    llm.name
+                    llm.apiSession.llmName
                 );
                 ui.input.initialize();
                 for await (const chunk of stream) {

@@ -22,7 +22,9 @@ export interface ApiSessionHook {
     isError: boolean;
     isLoading: boolean;
     isSuccess: boolean;
+    llmName: string;
     logout: () => void;
+    updateLlmName: (name: string) => void;
     validateApiKey: () => Promise<void>;
 }
 
@@ -32,6 +34,7 @@ export default function useApiSession(): ApiSessionHook {
     );
     const [apiKey, setApiKey] = useState("");
     const [status, setStatus] = useState(ApiSessionStatus.IDLE);
+    const [llmName, setLlmName] = useState<string>("");
 
     const clientRef = useRef(createLlmApiClient(apiProviderName, apiKey));
 
@@ -63,7 +66,15 @@ export default function useApiSession(): ApiSessionHook {
         clientRef.current = createLlmApiClient(apiProviderName, apiKey);
 
         try {
-            await clientRef.current.validateApiKey();
+            const client = clientRef.current;
+            await client.validateApiKey();
+            if (
+                !client
+                    .getAvailableModels()
+                    .find((modelName) => modelName === llmName)
+            ) {
+                setLlmName(client.getDefaultModelName());
+            }
             setStatus(ApiSessionStatus.SUCCESS);
         } catch (error) {
             console.error(error);
@@ -80,7 +91,11 @@ export default function useApiSession(): ApiSessionHook {
         isError,
         isLoading,
         isSuccess,
+        llmName,
         logout,
+        updateLlmName: (name: string) => {
+            setLlmName(name);
+        },
         validateApiKey,
     };
 }
