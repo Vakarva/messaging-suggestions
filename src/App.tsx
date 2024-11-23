@@ -84,8 +84,8 @@ export default function App() {
                 </AppShell.Navbar>
                 <AppShell.Main>
                     <ChatHistory
+                        bottomRef={chat.ui.output.messagesBottomRef}
                         messages={chat.ui.output.messages}
-                        ref={chat.ui.output.messagesBottomRef}
                     />
                 </AppShell.Main>
                 <AppShell.Footer

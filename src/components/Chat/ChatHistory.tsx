@@ -1,4 +1,3 @@
-import { forwardRef } from "react";
 import { Box, Stack } from "@mantine/core";
 
 import { Message, Role } from "@custom-types";
@@ -6,13 +5,11 @@ import { Message, Role } from "@custom-types";
 import { ChatBubble } from "@components/Chat/index";
 
 interface ChatHistoryProps {
+    bottomRef: React.ForwardedRef<HTMLDivElement>;
     messages: Message[];
 }
 
-export default forwardRef(function ChatHistory(
-    { messages }: ChatHistoryProps,
-    ref: React.ForwardedRef<HTMLDivElement>
-) {
+export default function ChatHistory({ bottomRef, messages }: ChatHistoryProps) {
     const messageElements = messages.map((message) => (
         <Box
             key={message.createdAt.toISOString()}
@@ -27,7 +24,7 @@ export default forwardRef(function ChatHistory(
     return (
         <Stack>
             {messageElements}
-            <div ref={ref} />
+            <div ref={bottomRef} />
         </Stack>
     );
-});
+}
