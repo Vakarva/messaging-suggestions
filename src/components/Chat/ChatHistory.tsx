@@ -1,6 +1,5 @@
-import { useEffect } from "react";
+import { forwardRef } from "react";
 import { Box, Stack } from "@mantine/core";
-import { useScrollIntoView } from "@mantine/hooks";
 
 import { Message, Role } from "@custom-types";
 
@@ -10,9 +9,10 @@ interface ChatHistoryProps {
     messages: Message[];
 }
 
-export default function ChatHistory({ messages }: ChatHistoryProps) {
-    const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>();
-
+export default forwardRef(function ChatHistory(
+    { messages }: ChatHistoryProps,
+    ref: React.ForwardedRef<HTMLDivElement>
+) {
     const messageElements = messages.map((message) => (
         <Box
             key={message.createdAt.toISOString()}
@@ -24,14 +24,10 @@ export default function ChatHistory({ messages }: ChatHistoryProps) {
         </Box>
     ));
 
-    useEffect(() => {
-        scrollIntoView();
-    }, [messages]);
-
     return (
         <Stack>
             {messageElements}
-            <div ref={targetRef} />
+            <div ref={ref} />
         </Stack>
     );
-}
+});

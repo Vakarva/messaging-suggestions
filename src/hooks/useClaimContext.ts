@@ -14,13 +14,15 @@ export interface ClaimContextHook {
     update: (name: string, value: string) => void;
 }
 
-export default function useClaimContext(): ClaimContextHook {
-    const [data, setData] = useState<ClaimContext>({
+export default function useClaimContext(
+    initData: ClaimContext = {
         claimId: "",
         nextAppointment: "",
         nextPaymentAmount: "",
         nextPaymentDate: "",
-    });
+    }
+): ClaimContextHook {
+    const [data, setData] = useState<ClaimContext>(initData);
 
     const _staticPrompts = useMemo(
         () =>
@@ -39,7 +41,7 @@ export default function useClaimContext(): ClaimContextHook {
     const _buildContextPromptsArray = useCallback(
         (context: ClaimContext): string[] => {
             return Object.entries(context)
-                .filter(([_, value]) => value.trim() !== "")
+                .filter(([, value]) => value.trim() !== "")
                 .map(([key, value]) => {
                     const label = key
                         .replaceAll(/([A-Z])/g, " $1")

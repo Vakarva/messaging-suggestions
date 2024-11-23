@@ -83,7 +83,10 @@ export default function App() {
                     <Navbar llm={chat.llm} toggleNavbar={toggleNavbar} />
                 </AppShell.Navbar>
                 <AppShell.Main>
-                    <ChatHistory messages={chat.ui.output.messages} />
+                    <ChatHistory
+                        messages={chat.ui.output.messages}
+                        ref={chat.ui.output.messagesBottomRef}
+                    />
                 </AppShell.Main>
                 <AppShell.Footer
                     bg={componentBgColor}

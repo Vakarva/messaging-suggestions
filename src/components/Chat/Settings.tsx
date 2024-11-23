@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     Button,
     Fieldset,
@@ -17,12 +17,8 @@ interface SettingsProps {
 }
 
 export default function Settings({ close, llm }: SettingsProps) {
-    const draftClaimContext = useClaimContext();
+    const draftClaimContext = useClaimContext(llm.context.data);
     const [draftModelName, setDraftModelName] = useState<string>(llm.name);
-
-    useEffect(() => {
-        draftClaimContext.set(llm.context.data);
-    }, [llm.context.data]);
 
     const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
