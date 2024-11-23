@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Role } from "@custom-types";
 
@@ -16,7 +16,6 @@ export interface InputHook {
     redo: () => void;
     reset: () => void;
     role: Role;
-    setRole: (role: Role) => void;
     setText: (text: string) => void;
     text: string;
     textSelection: TextSelection;
@@ -25,7 +24,7 @@ export interface InputHook {
 }
 
 export default function useInput(): InputHook {
-    const [role, setRole] = useState<Role>(Role.user);
+    const [role, _setRole] = useState<Role>(Role.user);
     const [_userTextBox, _setUserTextBox] = useState("");
     const [_llmTextBox, _setLlmTextBox] = useState("");
     const [textSelection, _setTextSelection] = useState(TextSelection.HUMAN);
@@ -67,9 +66,10 @@ export default function useInput(): InputHook {
     };
 
     const toggleRole = () => {
-        setRole((oldRole) =>
+        _setRole((oldRole) =>
             oldRole === Role.user ? Role.assistant : Role.user
         );
+        reset(); // We don't want input to persist when role changes
     };
 
     const undo = () => {
@@ -77,10 +77,6 @@ export default function useInput(): InputHook {
             _setTextSelection(TextSelection.HUMAN);
         }
     };
-
-    // We don't want input to persist when role changes
-    // In production, we won't need this because there will be no role switching
-    useEffect(reset, [role]);
 
     return {
         append,
@@ -91,7 +87,6 @@ export default function useInput(): InputHook {
         redo,
         reset,
         role,
-        setRole,
         setText,
         text,
         textSelection,

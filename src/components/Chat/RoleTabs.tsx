@@ -29,7 +29,10 @@ export default function RoleTabs({ chat }: RoleTabsProps) {
     };
 
     const handleTabChange = (value: string | null) => {
-        chat.ui.input.setRole(value as Role);
+        const roleValue = value as Role;
+        if (roleValue !== chat.ui.input.role) {
+            chat.ui.input.toggleRole();
+        }
     };
 
     return (
